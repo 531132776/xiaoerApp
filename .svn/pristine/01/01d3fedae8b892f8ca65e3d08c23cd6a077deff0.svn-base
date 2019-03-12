@@ -1,0 +1,138 @@
+import Vue from 'vue'
+import Router from 'vue-router'
+import headerVue from '@/components/headerVue'
+import autoshow from '@/page/AutoShow/autoshow'
+// import AutoShowNotes from '@/page/AutoShow/AutoShowNotes'
+// import CarPurchaseGuide from '@/page/AutoShow/CarPurchaseGuide'
+// import TicketingGuide from '@/page/AutoShow/TicketingGuide'
+// import TrafficGuide from '@/page/AutoShow/TrafficGuide'
+import autoshowIndex from '@/page/AutoShow/autoshowIndex'
+import autoshowNew from '@/components/autoshowNew'
+import grouppurchase from '@/page/GroupPurchase/grouppurchase'
+import groupIndex from '@/page/GroupPurchase/groupIndex'
+import groupPuSignUp from '@/components/groupPuSignUp'
+import distributor from '@/page/Distributor/distributor'
+import distributorIndex from '@/page/Distributor/distributorIndex'
+import home from '@/page/Home/home'
+import homeIndex from '@/page/Home/homeIndex'
+import news from '@/components/news'
+import index from '@/page/index'
+
+Vue.use(Router)
+
+export default new Router({
+    routes: [
+
+        //团购报名
+        {
+            path: '/groupPuSignUp/:id',
+            name: 'groupPuSignUp',
+            component: groupPuSignUp,
+            meta: { keepAlive: false }
+        },
+        //车展详情
+        {
+            path: '/autoshowNew',
+            name: 'autoshowNew',
+            component: autoshowNew,
+            meta: { keepAlive: false }
+            // children:[
+            //   {
+            //     path:'/TicketingGuide',
+            //     name:'票务指南',
+            //     component: TicketingGuide
+            //   },
+            //   {
+            //     path:'/TrafficGuide',
+            //     name:'交通指南',
+            //     component: TrafficGuide
+            //   },
+            //   {
+            //     path:'/CarPurchaseGuide',
+            //     name:'购车指南',
+            //     component: CarPurchaseGuide
+            //   },
+            //   {
+            //     path:'/AutoShowNotes',
+            //     name:'车展须知',
+            //     component: TicketingGuide
+            //   },
+            // ]
+        },
+        //新闻
+        {
+            path: '/news',
+            name: 'news',
+            component: news,
+            // meta: { keepAlive: false }
+        },
+        //公用头部
+        {
+            path: '/headerVue',
+            name: 'headerVue',
+            component: headerVue,
+            status: true
+        },
+        //各大主模块
+        {
+            path: '/',
+            name: index,
+            component: index,
+            redirect: '/homeIndex',
+            children: [{
+                    path: '/homeIndex',
+                    name: 'homeIndex',
+                    component: homeIndex,
+                    redirect: '/home',
+                    children: [{
+                        path: '/home',
+                        name: 'home',
+                        component: home,
+                        meta: { keepAlive: true },
+                    }]
+                },
+                {
+                    path: '/autoshowIndex',
+                    name: 'autoshowIndex',
+                    component: autoshowIndex,
+                    redirect: '/autoshow',
+                    children: [{
+                        path: '/autoshow',
+                        name: 'autoshow',
+                        component: autoshow,
+                        meta: { keepAlive: true },
+                    }]
+                },
+                {
+                    path: '/groupIndex',
+                    name: 'groupIndex',
+                    component: groupIndex,
+                    redirect: '/grouppurchase',
+                    children: [{
+                            path: '/grouppurchase',
+                            name: 'grouppurchase',
+                            component: grouppurchase,
+                            meta: { active: 1, keepAlive: true },
+                        }
+
+                    ]
+                },
+                {
+                    path: '/distributorIndex',
+                    name: 'distributorIndex',
+                    component: distributorIndex,
+                    redirect: '/distributor',
+                    meta: { active: 1 },
+                    children: [{
+                        path: '/distributor',
+                        name: 'distributor',
+                        component: distributor,
+                        meta: { active: 1, keepAlive: true },
+                    }]
+                },
+
+            ]
+        },
+
+    ]
+})

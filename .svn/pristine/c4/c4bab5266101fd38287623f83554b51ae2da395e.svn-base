@@ -1,0 +1,918 @@
+<template>
+  <div class="groupPuSignUp common_news">
+    <!-- 头部 -->
+    <mu-appbar color="">
+      <mu-button icon slot="left" @click="$router.back(-1)">
+        <mu-icon value=":iconfont icon-zuo headerZuo"></mu-icon>
+      </mu-button>
+      团购报名
+      <!-- <mu-button icon slot="right" class="navIcon" ref="button" @click="open = !open">
+        <mu-icon value="menu"></mu-icon>
+      </mu-button> -->
+      <div slot="right" @click="open = !open" ref="button" class="headerNavRight">
+              导航
+            </div>
+      <div >
+        <mu-popover class="titleNav" cover :open.sync="open" :trigger="trigger" placement="left-start" style="top: 50px;">
+          <mu-list>
+            <mu-list-item button v-for="(item,index) in $store.state.routelist" :key="index">
+              <mu-list-item-title>
+                <router-link :to="item.path">{{item.title}}</router-link>
+              </mu-list-item-title>
+            </mu-list-item>
+          </mu-list>
+        </mu-popover>
+      </div>
+    </mu-appbar>
+    <!-- 内容 -->
+    <section class="groupPuSP_midd bg_fff">
+      <div class="groupbrand_name">
+        <mu-list>
+          <mu-list-item  button :ripple="false">
+            <mu-list-item-action >
+              <mu-avatar>
+                <img :src="brandLogo" alt="">
+              </mu-avatar>
+            </mu-list-item-action>
+            <mu-list-item-content>
+              <mu-list-item-title>{{objValue.name}}</mu-list-item-title>
+              <mu-list-item-sub-title>
+                <span class="text-999">当前有<em class="text-red">{{objValue.intentionerNumber}}</em>人报名</span>
+              </mu-list-item-sub-title>
+            </mu-list-item-content>
+          </mu-list-item>
+        </mu-list>
+        <!-- <mu-flex justify-content="center" align-items="center">
+          <mu-button round small color="primary">免费参与</mu-button>
+        </mu-flex> -->
+      </div>
+      
+      <div class="groupbrand_img">
+        <mu-container fluid>
+            <img :src="objValue.seriesImage" class="img-responsive" alt="">
+        </mu-container>
+        <mu-list>
+          <mu-list-item>
+            <mu-list-item-content>
+              <mu-list-item-sub-title>时间：<span>{{objValue.startTime}} - {{objValue.endTime}}</span></mu-list-item-sub-title>
+              <mu-list-item-sub-title>地点：<span>{{objValue.address}}</span> </mu-list-item-sub-title>
+              <mu-list-item-sub-title>本期已报名：<span class="text-red">{{objValue.intentionerNumber}}</span> 人</mu-list-item-sub-title>
+              <mu-list-item-sub-title>团车价格：<span class="text-red">现场公布</span> </mu-list-item-sub-title>
+            </mu-list-item-content>
+          </mu-list-item>
+          <mu-list-item>
+            <mu-list-item-content class="groupPurch_Count_down">
+              <mu-list-item-sub-title>活动倒计时：
+                <span>还剩
+                  <em> 6 </em><i>天</i>
+                  <em> 1 </em><i>小时</i>
+                  <em> 26 </em><i>分</i>
+                  <em> 38 </em><i>秒</i>
+                </span> 
+              </mu-list-item-sub-title>
+            </mu-list-item-content>
+          </mu-list-item>
+        </mu-list>
+        <mu-divider></mu-divider>
+      </div>
+      
+    </section>
+    <section class="groupSignUp pt10">
+      <div class="group_from bg_fff">
+        <div class="lg_title">
+          <div class="mu-sub-header">立即免费报名</div>
+        </div>
+        <mu-divider></mu-divider>
+        <!-- 团购报名 -->
+            <div class="groupPurchSignUp_from">
+              <div class="bg_fff">
+                  <mu-form :model="signUpForm" ref="signUpForm" class="mu-demo-form p15" label-position="top">
+                    <mu-form-item label="姓名" help-text="请输入姓名" prop="name" :rules="usernameRules">
+                        <mu-text-field v-model="signUpForm.name"  prop="name" label-float icon=":iconfont icon-wode"></mu-text-field>
+                    </mu-form-item>
+                    <mu-form-item label="手机号码" prop="phone" :rules="phomeRules">
+                        <mu-text-field v-model="signUpForm.phone" prop="phone" label-float :max-length="11" icon=":iconfont icon-shouji"></mu-text-field>
+                    </mu-form-item>
+
+                    <mu-form-item label="选择城市" prop="city" :rules="cityRules" class="optionCity">
+                      <i class="iconfont icon-weizhi"></i>
+                      <mu-select label="" v-model="signUpForm.city" full-width @change="selectCityId">
+                        <mu-option v-for="(option,index) in cityList" :key="index" :label="option.name" :value="option.id" ></mu-option>
+                      </mu-select>
+                    </mu-form-item>
+
+                    <mu-form-item label="选择车型" prop="brandCar" :rules="carRules" class="optionCar">
+                      <mu-text-field v-model="signUpForm.brandCar" prop="brandCar" label-float icon=":iconfont icon-wode" @click="open2 = !open2"></mu-text-field>
+                      <!-- <i class="iconfont icon-qiche"></i>
+                      <mu-select label="" v-model="signUpForm.brandCar" full-width>
+                        <mu-option v-for="(option,index) in options" :key="index" :label="option" :value="option" ></mu-option>
+                      </mu-select> -->
+                    </mu-form-item>
+
+                    <mu-form-item label="选择车款" prop="Carmoney" :rules="carMoneyRules" class="optionCar">
+                      <i class="iconfont icon-qiche"></i>
+                      <mu-select label="" v-model="signUpForm.Carmoney" full-width @change="selectCarId">
+                        <mu-option v-for="(carmoney,index) in CarMoneyList" :key="index" :label="carmoney.carName" :value="carmoney.carId" ></mu-option>
+                      </mu-select>
+                    </mu-form-item>
+
+                    <mu-form-item label="寄票地址" :rules="addressRules" prop="address">
+                        <mu-text-field v-model="signUpForm.address" multi-line  prop="address" :rows="2" full-width></mu-text-field><br/>
+                    </mu-form-item> 
+                    <mu-form-item class="signUpButton">
+                        <mu-button full-width color="primary" @click="groupPurchSubmit">团购报名</mu-button>
+                    </mu-form-item>
+                  </mu-form>
+              </div>
+            </div>
+      </div>
+      <!-- 选择车型 -->
+      <mu-drawer :open.sync="open2" :docked="docked" :right="position === 'left'">
+        <mu-list class="ChoiceBrandCar">
+            <mu-list-item button v-for="(item,index) in categoryList" :key="index" @click.prevent="choiceCar(item.companyId, item.seriesId, item.name)">
+              <mu-list-item-title>{{item.name}}</mu-list-item-title>
+            </mu-list-item>
+            <mu-list-item  @click="open2 = false" button>
+                <mu-list-item-title>Close</mu-list-item-title>
+            </mu-list-item>
+        </mu-list>
+      </mu-drawer>
+    </section>
+    <!-- 最新团购报名 -->
+    <div class="newgroup_friends pt10">
+      <div class="bg_fff">
+        <div class="lg_title">
+          <div class="mu-sub-header">最新报名团友</div>
+        </div>
+        <mu-divider></mu-divider>
+        <div class="newgroup_friend_list ">
+          <!-- <div class="group_friend_content">
+            <div class="group_content_item scroll">
+              <ul class="inner-container">
+                <li v-for="(item,index) in groupList" :key="index">
+                  <span>{{item.name}}</span>
+                  <span class="text-999">{{item.phone}}</span>
+                  <span class="text-999">{{item.cssName}}</span>
+                </li>
+              </ul>
+              
+            </div>
+           
+          </div> -->
+          <div class="marquee">
+            <div class="marquee_box">
+                <ul class="marquee_list" :class="{marquee_top:animate}">
+                    <li v-for="(item, index) in groupList" :key="index">
+                        <span>{{item.name}}</span>
+                        <span class="text-999"> {{item.phone}}</span>
+                        <span class="text-red"> {{item.cssName}}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        </div>
+      </div>
+    </div>
+    <!-- 询问底价 -->
+    <div class="bottom_price pt10">
+      <div class="bottom_price_lists bg_fff">
+        <div class="lg_title">
+          <div class="mu-sub-header">{{objValue.name}}</div>
+        </div>
+        <mu-divider></mu-divider>
+        <div class="price_list_content pb10">
+          <div class="price_list_item p15 view_cell_after after_last" v-for="(item,index) in allCarmoneyLists" :key="index">
+            <div class="prcie_item_left">
+              <div class="carMoney_model">{{item.carName}}</div>
+              <span class="text-999 text_line_through text_14">{{item.finalPrice}}</span>
+            </div>
+            <div class="prcie_item_right">
+              <div class="text_14"><span class="text-999">行情价</span> <em class="text-red text_line_through">￥{{item.mprice}}万</em></div>
+              <div>
+                <mu-button color="secondary" small @click="openFloorprice(item.seriesId,item.manufacturer,item.carId,item.companyId)">询问底价</mu-button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--团购流程及优惠 -->
+    <div class="group_purchase_process pt10">
+      <!-- 活动概况 -->
+      <div class="activitySurvey">
+        <div class=" bg_fff">
+          <div class="lg_title">
+            <div class="mu-sub-header">活动概况</div>
+          </div>
+          <mu-divider></mu-divider>
+          <div class="p15">
+            <ul>
+              <li><i class="iconfont icon-jiangpin text-red"></i><b>活动专属底价</b><em> 报名后到现场参与，享当天活动底价（同期市场低水平）。</em></li>
+              <li><i class="iconfont icon-jiangpin text-red"></i><b>金融政策支持</b><em> 多种金融政策供你选择，低息低按揭，让您购车无忧。</em></li>
+              <li><i class="iconfont icon-jiangpin text-red"></i><b>新旧置换有礼</b><em> 活动当天现场，专享免费评估，置换再享折上折，价格舒心可靠。</em></li>
+              <li><i class="iconfont icon-jiangpin text-red"></i><b>参与活动有礼</b><em> 只要当天参与到活动现场，即可获得精美礼品一份。</em></li>
+              <li><i class="iconfont icon-jiangpin text-red"></i><b>购车抽奖有礼</b><em> 活动当天成功订车客户，可参与一次抽奖（礼品价值几千～几百元不等）。</em></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="activitySurvey pt10">
+        <div class="bg_fff">
+          <div class="lg_title">
+            <div class="mu-sub-header">参与流程</div>
+          </div>
+          <mu-divider></mu-divider>
+          <div class="p15">
+            <dl>
+              <dt><b>1：确认参与名额</b></dt>
+              <dd>活动顾问2个工作日内与您电话沟通活动详情</dd>
+              <dt><b>2：邀您参与</b></dt>
+              <dd>活动开始前2个工作日通知您安排时间参与</dd>
+              <dt><b>3：现场参与</b></dt>
+              <dd>若对当天价格满意，可选择现场订车</dd>
+              <dt><b>4：后续服务</b></dt>
+              <dd>后续提车，办理手续等全程服务</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+      <!-- 常见问题解答 -->
+      <div class="Common_problem pt10">
+        <div class="bg_fff">
+          <div class="lg_title">
+              <div class="mu-sub-header">常见问题解答</div>
+          </div>
+          <div class="pb15">
+              <mu-expansion-panel :expand="aa === 'bb'" @change="toggle('bb')">
+                  <div slot="header">免费门票如何领取?</div>
+                  <span class="text_14">领取免费门票有2种官方渠道，下面为您详细介绍： 1、点击进入官方领票网址，填写您的姓名电话和收件地址，即可免费领取；
+                                      2、拨打官方免费领票热线400-1010-222，告知客服您的姓名电话和收件地址，即可免费领取。</span>
+              </mu-expansion-panel>
+              <mu-expansion-panel :expand="aa === 'bb2'" @change="toggle('bb2')">
+                  <div slot="header">车展买车价格真的便宜吗？</div>
+                  <span class="text_14">这个答案是肯定的，车展开展前官方会面向网友赠送价值1000元购车代金券，是可以抵扣购车款的。</span>
+              </mu-expansion-panel>
+              <mu-expansion-panel :expand="aa === 'bb3'" @change="toggle('bb3')">
+                  <div slot="header">车展买车的车源质量有保障吗？</div>
+                  <span class="text_14">车展买车车源质量是绝对保证的，参加参展的展商都是来自官方厂家、区域、经销商，保证车源质量与售后服务。</span>
+              </mu-expansion-panel>
+              <mu-expansion-panel :expand="aa === 'bb4'" @change="toggle('bb4')">
+                  <div slot="header">车展买车后售后怎么办？</div>
+                  <span class="text_14">您在车展上买车之后，所享受的售后服务直接由4S店负责，包括交税、上牌、买保险等事宜。</span>
+              </mu-expansion-panel>
+          </div>
+        </div>
+      </div>
+      <!-- 团购回顾 -->
+      <div class="groupPurch_review pt10">
+
+        <div class="bg_fff">
+          <div class="lg_title">
+              <div class="mu-sub-header">团购回顾</div>
+          </div>
+          <mu-divider></mu-divider>
+          <div class="groupPurch_review_lsit p5">
+            <div class="group_review_img" v-for="(item,index) in autoshowReviewImgs" :key="index">
+              <img :src="item.img" alt="" preview :previw-text="item.previewText" class="img-responsive">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 询问底价 -->
+    <mu-dialog :title="FloorPricename" width="80%" max-width="80%" :esc-press-close="false" :overlay-close="false" :open.sync="openFloorPrice">
+        <div class="openFloorPriceForm">
+            <mu-form ref="priceForm" :model="openFloorPriceForm" class="mu-demo-form">
+                <mu-form-item label="用户名" prop="name" :rules="pricenameRules">
+                    <mu-text-field v-model="openFloorPriceForm.name" label-float prop="name"></mu-text-field>
+                </mu-form-item>
+                <mu-form-item label="电话" prop="phone" :rules="pricephoneRules">
+                    <mu-text-field type="text" v-model="openFloorPriceForm.phone" label-float :max-length="11" prop="phone"></mu-text-field>
+                </mu-form-item>
+                <mu-form-item>
+                    <mu-button color="primary" @click="PriceFormsubmit">提交</mu-button>
+                    <mu-button @click="PriceFormFormclear">取消</mu-button>
+                </mu-form-item>
+            </mu-form>
+        </div>
+    </mu-dialog>
+    <!-- 回到顶部 -->
+        <transition name="fade" mode="out-in">
+            <div class="scroll_top " v-show="$store.state.showTop" @click="TopScroll">
+                <span class="iconfont icon-triangle-up"></span>
+            </div>
+        </transition>
+  </div>
+</template>
+
+<script>
+import apiAll from '@/http/apiAll'
+import Toast from 'muse-ui-toast'
+import { mapMutations,mapActions } from 'vuex'
+export default {
+  name: 'groupPuSignUp',
+  data () {
+    return {
+      animate:false,
+      docked: false,
+      open2: false,
+      position: 'left',
+        options: [
+        'Option 1', 'Option 2', 'Option 3', 'Option 4',
+        'Option 5', 'Option 6', 'Option 7', 'Option 8',
+        'Option 9', 'Option 10'
+      ],
+      custom: {
+        value1: '',
+        value2: []
+      },
+        aa:'',
+        open: false,
+        trigger: null,
+        drawerOpen:false,
+         usernameRules:[
+          { validate: (val) => !!val, message: '请填写用户名'},
+          { validate: (val) => val.length >= 2, message: '用户名长度大于2'} 
+        ],
+        phomeRules:[
+          { validate: (val) => !!val, message: '请填写手机号码'},
+          { validate: (val) => val.length <= 11, message: '密码长度为11位'},
+          { validate: (val) => /^[1][3,4,5,7,8][0-9]{9}$/.test(val), message: '请输入正确手机号'},
+        ],
+        cityRules:[
+          { validate: (val) => !!val, message: '请选择城市'},
+        ],
+        carRules:[
+          { validate: (val) => !!val, message: '请选择车型'},
+        ],
+        carMoneyRules:[
+          { validate: (val) => !!val, message: '请选择车款'},
+        ],
+        addressRules:[
+          { validate: (val) => !!val, message: '请填写您的收票地址'},
+        ],
+        signUpForm:{
+          name: '',
+          phome: '',
+          brandCar:'',
+          address: '',
+          city: '',
+          Carmoney: ''
+        },
+        cityList:[],
+        //现场回顾
+        autoshowReviewImgs:[
+            {
+                img:require('@static/images/chezhan/a0f7d6b6-c511-4640-8e0c-373c90d8581e.jpg'),
+                previewText: '现场抽奖'
+            },
+            {
+                img:require('@static/images/chezhan/chezhan4.jpg'),
+                previewText: '2018大众CC盛夏来袭'
+            },
+            {
+                img:require('@static/images/chezhan/chezhan2.jpg'),
+                previewText: '英国皇家捷豹XLJ'
+            },
+            {
+                img:require('@static/images/chezhan/25aca667-c19f-4e3a-8a19-827227923c38.jpg'),
+                previewText: '2018新款保时捷'
+            },
+            {
+                img:require('@static/images/chezhan/28352efd-e759-4590-b893-06d3be7c7279.jpg'),
+                previewText: '现场活动进行中'
+            }
+        ],
+        groupList: [],
+        groupCarId: '',
+        brandLogo:'',//汽车品牌logo
+        brandName:'',//汽车品牌名称
+        categoryList:[],//
+        groupPurchSignUpInfo:{//
+          carId:'',
+          cityId:'',
+          cssId:''
+        },
+        CarMoneyList:[],//选择车款
+        allCarmoneyLists:[],//车款列表
+        openFloorPrice:false,//询问底价
+        FloorpriceCssId:'',//询底价cssId
+        FloorPricename:'',//询底价
+        openFloorPriceForm:{ //询问底价form
+                    name:'',
+                    phone:''
+                },
+        //询问底价
+        pricenameRules: [
+                            { validate: (val) => !!val, message: '请填写用户名'},
+                        ],
+        pricephoneRules: [
+                            { validate: (val) => !!val, message: '请填写手机号码便于工作人员联系您'},
+                            { validate: (val) => val.length <= 11, message: '密码长度为11位'},
+                            { validate: (val) => /^[1][3,4,5,7,8][0-9]{9}$/.test(val), message: '请输入正确手机号'}
+                        ],
+        companyId:'',
+        objValue:{}
+    }
+  },
+  
+  created () {
+    this.$store.state.showTopNav = false;//当辞页面是子页面时才需要
+    // this.bus.$emit('toString', function (seriesId) {
+    //         console.log(seriesId)
+    //     })
+    // window.localStorage.setItem(`companyId`,this.$route.params.companyId);//缓存公司Id
+    // this.companyId = window.localStorage.getItem(`companyId`);
+    // let item = this.$route.params.item;//dealsershop.vue传过来的对象；
+    // // let obj = JSON.parse(item);
+    // window.localStorage.setItem(`objItem`,this.$route.params.item);
+    // let newObj = window.localStorage.getItem(`objItem`);
+
+    this.groupCarId = this.$store.state.dealershopdetail.id || JSON.parse(sessionStorage.getItem('detail')).id;
+    this.arrCssIds = this.$store.state.dealershopdetail.seriesId || JSON.parse(sessionStorage.getItem('detail')).seriesId;
+    this.companyId = this.$store.state.dealershopdetail.companyId || JSON.parse(sessionStorage.getItem('detail')).companyId;
+    this.objValue = this.$store.state.dealershopdetail.itemObj || JSON.parse(sessionStorage.getItem('detail')).itemObj;
+
+    console.log(this.objValue)
+    
+    //获取城市
+    this.getCityList();
+    //获取最新团购团友
+    this.getGroupSingUpList();
+    //获取汽车
+    this.getCarBrand();
+    setInterval (this.showMarquee, 2000)
+  },
+  mounted () {
+    //this.arrCssIds = this.$route.params.cssIds;//所有车款
+    // console.log(this.$route.params.cssIds)
+    this.trigger = this.$refs.button.$el;
+    //获取车款列表
+    setTimeout(()=>{
+        this.getCarmoneryPrice()
+    },500);
+    //回到顶部
+    const _this = this
+    window.addEventListener('scroll', _this.handleScroll)
+  },
+  methods:{
+    showMarquee: function () {
+                this.animate = true;
+                setTimeout (() => {
+                    this.groupList.push(this.groupList[0]);
+                    this.groupList.shift();
+                    this.animate = false;
+                }, 500);
+
+            },
+    ...mapMutations(['handleScroll']),
+    ...mapActions(['addAction','TopScroll']),
+      //车款报价
+    async getCarmoneryPrice(){
+        let data = {
+            companyId: this.objValue.companyId,
+            seriesId: this.objValue.seriesId,
+            pageSize: 10,
+            currentPage: 1
+        }
+        let res = await apiAll.getCarPicer(data);
+        console.log(res);
+        this.allCarmoneyLists = res.data;
+    },
+    //询问底价模态框
+            openFloorprice(seriesId,carSeriesName,carId,companyId){
+                this.FloorPricename = carSeriesName;
+                this.FloorpriceCssId = seriesId;
+                console.log(seriesId)
+                this.openFloorPrice = true;
+                this.groupPurchSignUpInfo.carId = carId;
+                this.companyId = companyId
+            },
+            //询问底价报名
+            PriceFormsubmit(){
+                this.$refs.priceForm.validate().then((result) => {
+                    console.log('form valid: ', result)
+                    if(result){
+                        let data = {
+                            companyId: this.companyId,
+                            cssId: this.FloorpriceCssId,
+                            carId: this.groupPurchSignUpInfo.carId,
+                            name: this.openFloorPriceForm.name,
+                            phone: this.openFloorPriceForm.phone,
+                            type: 2
+                        }
+                    apiAll.companyIntentioner(data).then(res => {
+                        console.log(res)
+                        this.$toast.success({
+                            position: 'top',
+                            message:'询底价成功',
+                            successIcon: 'check_circle',   // 成功信息图标
+                            infoIcon: 'info'
+                        })
+                        this.$refs.priceForm.clear();
+                        this.openFloorPriceForm = {
+                            name: '',
+                            phone: '',
+                        };
+                        this.openFloorPrice = false
+                        }).catch(e => {
+                            Toast.error({
+                                message: '询底价失败',
+                                infoIcon: 'info',
+                                errorIcon: 'warning'
+                            })
+                        })
+                    }
+                    
+                });
+            },
+            //询底价关闭模态框
+            PriceFormFormclear(){
+                this.$refs.priceForm.clear();
+                this.openFloorPriceForm = {
+                    name: '',
+                    phone: '',
+                };
+                this.openFloorPrice = false
+            },
+    
+    //获取城市ID
+    selectCityId(val){
+      // alert(val)
+      this.groupPurchSignUpInfo.cityId = val;
+    },
+    //获取当前车款id
+    selectCarId(val){
+        // alert(val)
+        this.groupPurchSignUpInfo.carId = val
+    },
+    //选择车型
+    choiceCar(companyId,seriesId,carname){
+        this.groupPurchSignUpInfo.cssId = seriesId;
+        this.signUpForm.brandCar = carname;
+      let data = {
+          companyId:companyId,
+          seriesId:seriesId
+      }
+      apiAll.getCompanyallcar(data).then(res => {
+        console.log(res)
+        // if(res.data != null && res.data !=undefined){
+          this.CarMoneyList = res.data || [];
+        // }
+      }).catch(e => {
+        this.$toast.success({
+            position: 'top',
+            message:'可能没有车款数据！',
+            infoIcon:'info'
+          })
+      })
+    },
+    
+    //获取车型
+    async getCarBrand(){
+      // debugger
+      console.log(this.companyId);
+      let data = {
+          companyId:this.companyId
+      }
+      try{
+        let getCar = await apiAll.dealershopGetPurchList(data);
+        console.log(getCar)
+        
+        if(getCar.data != null && getCar.data !=undefined){
+          this.categoryList = getCar.data;
+          
+        }else{
+          Toast.error({
+            message:'没有数据',
+            position:'top',
+            errorIcon: 'warning',
+            infoIcon: 'info',
+          })
+        }
+      }catch(e){
+        this.$alert('没有可用数据','提示',{
+          errorIcon: 'warning',
+            iconSize: 24,
+            width: '80%',
+            transition: 'scale',
+            okLabel: '确定',
+       })
+      }
+    },
+    //获取城市
+   async getCityList(){
+     try{
+       let getCity = await apiAll.getCityList({});
+      //  console.log(getCity);
+       if(getCity.data != null && getCity.data !=undefined){
+         this.cityList = getCity.data
+       }
+
+     }catch(e){
+       this.$alert('请求错误!','提示',{
+          errorIcon: 'warning',
+            iconSize: 24,
+            width: '80%',
+            transition: 'scale',
+            okLabel: '确定',
+       })
+     }
+   },
+    //获取最新团购团友
+   async getGroupSingUpList(){
+     try{
+       let groupList =await apiAll.getGroupSingUpList({});
+      //  console.log(groupList);
+       if(groupList.data != null && groupList.data !=undefined){
+         this.groupList = groupList.data;
+       }
+     }catch (e){
+       this.$alert('请求错误!!','提示',{
+          errorIcon: 'warning',
+            iconSize: 24,
+            width: '80%',
+            transition: 'scale',
+            okLabel: '确定',
+       })
+     }
+    },
+    groupPurchSubmit(){
+        this.$refs.signUpForm.validate().then((result) => {
+        // console.log('signUpForm valid: ', result);
+        if(result){
+          // alert('请输入相关信息')
+          // Toast.success({需要引入toast
+          //   message:'错误提示',
+          //   position:'top',
+          //   errorIcon: 'warning'
+          // });
+          let groupPurch = {
+            companyId: this.objValue.companyId,
+            name: this.signUpForm.name,
+            phone: this.signUpForm.phone,
+            type: 1,
+            carId: this.groupPurchSignUpInfo.carId,
+            cssId: this.groupPurchSignUpInfo.cssId,
+            groupPurchaseId: this.groupCarId,
+          }
+          apiAll.companyIntentioner(groupPurch).then(res => {
+              console.log(res)
+              this.$toast.success({
+                position: 'top',
+                message:'报名成功',
+                successIcon: 'check_circle',   // 成功信息图标
+                infoIcon: 'info'
+              })
+              this.$refs.signUpForm.clear();
+              this.signUpForm = {
+                    name: '',
+                    phome: '',
+                    brandCar:'',
+                    address: '',
+                    city: '',
+                    Carmoney: ''
+                  }
+              
+          }).catch(e => {
+              this.$toast.warning({
+                position: 'top',
+                message:'因阁下人品问题未能报名成功！',
+                infoIcon:'info',
+                warningIcon: 'priority_high'
+              })
+          })
+          
+        }else{
+          return false
+        }
+      });
+      },
+      toggle(b){
+        this.aa = b === this.aa ? '' : b
+      }
+  },
+   destroyed(){//离开页面就销毁
+        // clearInterval( this.p );
+      }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style >
+.marquee {
+            width: 100%;
+            height: 50px;
+            align-items: center;
+            color: #3A3A3A;
+            display: flex;
+            box-sizing: border-box;
+        }
+ .marquee_box {
+            display: block;
+            position: relative;
+            width: 100%;
+            height: 30px;
+            overflow: hidden;
+        }
+
+        .marquee_list {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        .marquee_top {
+            transition: all 0.5s;
+            margin-top: -30px
+        }
+
+        .marquee_list li {
+            height: 30px;
+            line-height: 30px;
+            font-size: 14px;
+            padding-left: 20px;
+        }
+
+        .marquee_list li span {
+            padding: 0 2px;
+            display: inline-block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .marquee_list li span:nth-child(1){
+          width: 20%;
+        }
+        .marquee_list li span:nth-child(2){
+          width: 32%;
+        }
+.ChoiceBrandCar .mu-expansion-panel__expand .mu-expansion-panel-header{
+  min-height: 30px;
+}
+.ChoiceBrandCar .mu-expansion-panel-content .mu-item{
+  height: 30px;
+}
+.ChoiceBrandCar .mu-expansion-panel-content .mu-item .mu-item-title{
+  font-size: 14px;
+}
+/* .inner-container {
+  animation: myMove 5s linear infinite;
+  animation-fill-mode: forwards;
+}
+@keyframes myMove {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-150px);
+  }
+}
+.scroll ul{position: relative;width: 100%}
+.scroll li{overflow: hidden;white-space: nowrap;width:100%;text-overflow:ellipsis;;height: 34px;line-height: 34px;text-align: left;margin: 0;font-size: 14px}
+.scroll{height:60px;overflow: hidden;font-size: 0px;  position: relative;}
+.transition{transition: top 0.5s} */
+.optionCar .mu-form-item-content, .optionCity .mu-form-item-content{
+  position: relative;
+}
+.optionCar .mu-form-item-content > i, .optionCity .mu-form-item-content > i{
+    position: absolute;
+    left: -25px;
+    font-size: 20px;
+}
+    
+.groupPurch_review_lsit{
+        display: -webkit-box;
+        display: flex;
+        display: -webkit-flex;
+        flex-flow: row wrap;
+        align-items: center;
+        align-content: center;
+        justify-content: flex-start;
+        width: 100%;
+    }
+    .group_review_img{
+        width: 33.333333333%;
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content:center;
+        align-content:center;
+        padding: 5px;
+        text-align: center;
+    }
+.Common_problem .mu-expansion-panel:last-child{
+  box-shadow: none;
+}
+.activitySurvey ul>li .iconfont{
+  font-size: 22px;
+  margin-right: 5px;
+  display: inline-block;
+  -webkit-transform: translateY(2px);
+  transform: translateY(2px);
+}
+.activitySurvey dl>dt, .activitySurvey ul>li>b{
+  font-size: 16px;
+}
+.activitySurvey dl>dd, .activitySurvey ul>li em{
+  font-size: 14px;
+  color: #999;
+}
+.price_list_content .carMoney_model{
+  font-size: 16px;
+}
+.group_friend_content, .price_list_content{
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  width: 100%;
+}
+.group_content_item, .price_list_item{
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  flex-flow: row nowrap;
+  align-content: center;
+  align-items: center;
+  width: 100%;
+}
+.price_list_item:last-child::after{
+  height: 0;
+  
+}
+.prcie_item_left, .prcie_item_right{
+  flex: 2;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-around;
+  align-items: flex-start;
+  align-content: flex-start;
+}
+.prcie_item_right{
+  flex: 1;
+  align-self: flex-end;
+  align-items: flex-end;
+}
+.group_content_item{
+  height: 100px;
+}
+.group_content_item ul > li > span{
+  padding: 5px 5px 5px 0;
+  font-size: 14px;
+  display: inline-block;
+}
+.group_content_item ul > li > span:nth-child(1){
+  width: 18%;
+  /* overflow: hidden; */
+  /* text-overflow: ellipsis; */
+  /* white-space: nowrap; */
+}
+.group_content_item ul > li > span:nth-child(2){
+  width: 32%;
+}
+
+/* .group_content_item > span:nth-child(4){
+  width: 18%;
+} */
+.group_content_item > span:last-child{
+  margin-right: 0;
+}
+.groupbrand_img .mu-list .mu-item{
+  height: auto;
+}
+.groupbrand_name .mu-avatar {
+    height: 1.333333rem !important;
+    width: 1.333333rem !important;
+    border-radius: 0;
+    background: none;
+}
+.groupPurchSignUp_from .mu-form-item__has-label{
+   padding-left: 25px;
+   margin-bottom: 5px;
+ }
+ .mu-input.full-width .mu-input-label{
+   font-size: 18px;
+ }
+ .groupPurchSignUp_from .mu-input.has-icon .mu-input-icon{
+   left: -25px;
+   font-size: 20px;
+ }
+ .groupPurchSignUp_from .signUpButton .mu-form-item-content{
+   margin-top: 20px;
+ }
+  .groupPurchSignUp_from .signUpButton .mu-form-item-content .mu-button{
+   margin: 0;
+ }
+ .groupPurchSignUp_from .mu-form-item:last-child{
+   margin-bottom: 0px;
+ }
+ .groupPurch_Count_down em{
+   font-size: 18px;
+   color: #ff4081;
+ }
+</style>

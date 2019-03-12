@@ -1,0 +1,52 @@
+import axios from './axios.js'
+
+//统一接口管理(两种方式皆可)
+// export default {
+
+//     carBrand(params = {}) { return axios.post(`/brand/getBrandCarSeries`, params ) },
+
+//     AutoShowGetList(params = {}) { return axios.post(`/autoshow/getList`, params ) },
+// }
+
+/*车品牌*/
+export const carBrand = params => { return axios.post(`/brand/getBrandCarSeries`, params ); };
+
+// 车展列表
+export const AutoShowGetList = params => { return axios.post(`/autoshow/getList`, params ); };
+
+//团购列表
+export const GroupPurchGetList = params => { return axios.post(`/tuangou/getList`,params)}
+
+//报名
+export const autoshowInsertIntentioner = params => { return axios.post(`/intentioner/insertIntentioner`,params)}
+
+//获取城市
+export const getCityList = params => { return axios.post(`/city/getList`, params)}
+
+//获取汽车品牌
+export const getCarBrand = params => { return axios.post(`/tuangou/getBrandCarSeries`, params)}
+
+//获取团购最新报名团友
+export const getGroupSingUpList = params => { return axios.post(`/intentioner/getList`, params)}
+
+//获取团购车型
+export const getGroupList = params => { return axios.post(`/tuangou/getList`, params)}
+
+//获取车款
+export const getCarSeries = params => { return axios.post(`/car/getCarListBySeriesId`, params)}
+
+//获取车展车型
+export const getBrandCarSeries = params => { return axios.post(`/brand/getBrandCarSeries`, params)}
+
+//获取新闻
+export const getNewList = params => { return axios.post(`/news/getList`, params)}
+
+//获取商家品牌list
+export const getLetterBrandList = params => { return axios.post(`/brand/getLetterBrandList`, params)}
+
+//获取商家列表
+export const getCompanyList = params => { return axios.post(`/company/getList`, params)}
+export default {
+    carBrand, AutoShowGetList, GroupPurchGetList, autoshowInsertIntentioner, getCityList, getGroupList, getCarBrand, getGroupSingUpList,
+    getCarSeries, getBrandCarSeries, getNewList, getLetterBrandList, getCompanyList
+}

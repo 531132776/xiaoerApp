@@ -1,0 +1,361 @@
+<template>
+    <div class="dealershop common_news">
+        <!-- 头部标题 -->
+        <mu-paper :z-depth="1" class="demo-loadmore-wrap">
+          <mu-appbar color="teal">
+            <mu-button icon slot="left" @click="$router.back(-1)">
+              <mu-icon value=":iconfont icon-zuo headerZuo"></mu-icon>
+            </mu-button>
+            商家主页
+            <mu-button icon slot="right" class="navIcon" ref="button" @click="open = !open">
+              <mu-icon value="menu"></mu-icon>
+            </mu-button>
+            <div >
+              <mu-popover class="titleNav" cover :open.sync="open" :trigger="trigger" placement="left-start">
+                <mu-list>
+                  <mu-list-item button v-for="(item,index) in $store.state.routelist" :key="index">
+                    <mu-list-item-title>
+                      <router-link :to="item.path">{{item.title}}</router-link>
+                    </mu-list-item-title>
+                  </mu-list-item>
+                </mu-list>
+              </mu-popover>
+            </div>
+          </mu-appbar>
+        </mu-paper>
+        <!-- 内容区 -->
+        <section>
+            <div class="dealershopstoreimg">
+                <mu-row>
+                    <mu-col span="12" class="dealershopstore_imgHeight">
+                        <img src="@static/images/chezhan/ba3ed194-dc3b-466d-98ae-5c2143f6d588.jpg" alt="" class="img-responsive">
+                    </mu-col>
+                </mu-row>
+                <div class="dealershopbrand pr_pl15 pt_pb10">
+                    <div class="dealershoplogo">
+                        <img :src="'http://39.108.53.107:9098/'+this.company.companyLogo+''" alt="" >
+                    </div>
+                    <div class="dealershopcarlist">
+                        <div class="dealershoptitle">{{this.company.companyName}}</div>
+                        <div class="dealershopcar_classification text-999">
+                            <span>宝马一系</span><span>宝马2系</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt10">
+                <div class="bg_fff">
+                    <div >
+                        <mu-tabs :value.sync="active1" class="bg_fff" inverse color="secondary" text-color="rgba(0, 0, 0, .54)"  center>
+                            <mu-tab  v-for="(item,index) in list" :key="index" >{{item.tabs}}</mu-tab>
+                        </mu-tabs>
+                        <mu-divider></mu-divider>
+                        <div class="demo-text" v-if="active1 === 0">
+                            <mu-list textline="two-line" >
+                                <div class="view_cell_after after_last xunwenlist pt_pb5"  v-for="(item,index) in SpecialSaleModel" :key="index" >
+                                    <mu-list-item avatar :ripple="false" button>
+                                    <mu-list-item-content>
+                                        <mu-list-item-title>{{item.name}}</mu-list-item-title>
+                                        <mu-list-item-sub-title style="color: rgba(0, 0, 0, .87)">
+                                            <span class="brandTga">{{item.seriesName}}</span>
+                                        </mu-list-item-sub-title>
+                                        <mu-list-item-sub-title>
+                                        已结束
+                                        </mu-list-item-sub-title>
+                                    </mu-list-item-content>
+                                    <mu-list-item-action >
+                                        <mu-list-item-after-text><em class="text-red">{{item.intentionerNumber}}</em><em class="text-999">人报名</em></mu-list-item-after-text>
+                                        <mu-list-item-sub-title class="temaihuibtn">
+                                            <mu-button small color="secondary" @click="() => {$router.push({path:'/groupPuSignUp'})}">查看详情</mu-button>
+                                        </mu-list-item-sub-title>
+                                    </mu-list-item-action>
+                                    </mu-list-item>
+                                </div>
+                            </mu-list>
+                            
+                        </div>
+                        <div class="demo-text" v-if="active1 === 1">
+                            <mu-list textline="two-line">
+                                <div class="view_cell_after after_last xunwenlist pt_pb5" v-for="(item,index) in list" :key="index">
+                                    <mu-list-item avatar :ripple="false" button>
+                                    <mu-list-item-content>
+                                        <mu-list-item-title>宝马促销特卖会</mu-list-item-title>
+                                        <mu-list-item-sub-title>
+                                        宝马1系 <em>(小型车)</em>
+                                        </mu-list-item-sub-title>
+                                    </mu-list-item-content>
+                                    <mu-list-item-action >
+                                        <mu-list-item-after-text><em class="text-red">18.98-21.85万</em></mu-list-item-after-text>
+                                        <mu-list-item-sub-title>
+                                        指导价：<em>18.98-21.85万</em>
+                                        </mu-list-item-sub-title>
+                                        <mu-list-item-sub-title class="temaihuibtn">
+                                            <mu-button small color="primary" @click="openAlertdrive">预约试驾</mu-button>
+                                            <mu-button small color="secondary" @click="openFloorprice">询问底价</mu-button>
+                                        </mu-list-item-sub-title>
+                                    </mu-list-item-action>
+                                    </mu-list-item>
+                                </div>
+                            </mu-list>
+                            
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+        </section>
+        <!-- 预约试驾 -->
+        <mu-dialog title="预约试驾" width="80%" max-width="80%" :esc-press-close="false" :overlay-close="false" :open.sync="openAlertDrive">
+            <div class="openAlertDriveForm">
+                <mu-form ref="driveForm" :model="openAlertDriveForm" class="mu-demo-form">
+                    <mu-form-item label="用户名" prop="name" :rules="usernameRules">
+                        <mu-text-field v-model="openAlertDriveForm.name" prop="name"></mu-text-field>
+                    </mu-form-item>
+                    <mu-form-item label="电话" prop="phone" :rules="phoneRules">
+                        <mu-text-field type="text" v-model="openAlertDriveForm.phone" prop="phone"></mu-text-field>
+                    </mu-form-item>
+                    <mu-form-item>
+                        <mu-button color="primary" @click="openAlertDriveFormsubmit">提交</mu-button>
+                        <mu-button @click="openAlertDriveFormclear">重置</mu-button>
+                    </mu-form-item>
+                </mu-form>
+            </div>
+            <!-- <mu-button slot="actions" flat color="primary" @click="openAlertDrive =! openAlertDrive">Disagree</mu-button> -->
+            <!-- <mu-button slot="actions" flat color="primary" @click="openAlertDrive =! openAlertDrive">Agree</mu-button> -->
+        </mu-dialog>
+        <!-- 询问底价 -->
+        <mu-dialog title="询问底价" width="80%" max-width="80%" :esc-press-close="false" :overlay-close="false" :open.sync="openFloorPrice">
+            <div class="openFloorPriceForm">
+                <mu-form ref="priceForm" :model="openFloorPriceForm" class="mu-demo-form">
+                    <mu-form-item label="用户名" prop="name" :rules="pricenameRules">
+                        <mu-text-field v-model="openFloorPriceForm.name" prop="name"></mu-text-field>
+                    </mu-form-item>
+                    <mu-form-item label="电话" prop="phone" :rules="pricephoneRules">
+                        <mu-text-field type="text" v-model="openFloorPriceForm.phone" prop="phone"></mu-text-field>
+                    </mu-form-item>
+                    <mu-form-item>
+                        <mu-button color="primary" @click="PriceFormsubmit">提交</mu-button>
+                        <mu-button @click="PriceFormFormclear">重置</mu-button>
+                    </mu-form-item>
+                </mu-form>
+            </div>
+        </mu-dialog>
+    </div>
+</template>
+<style>
+    .xunwenlist .mu-item{
+        height: auto !important;
+    }
+    .brandTga{
+        display: inline-block;
+        padding: 0px 5px;
+        color: #fff;
+        background: #1cb0f6;
+        font-size: 12px;
+        border-radius: 20px;
+
+    }
+    .temaihuibtn .mu-raised-button{
+        min-width: auto !important;
+    }
+    .dealershopstoreimg{
+        position: relative;
+    }
+    .dealershoptitle{
+        font-size: 16px;
+        font-weight: 400;
+    }
+    .dealershopbrand{
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: flex-start;
+        align-items: center;
+        background: rgba(0,0,0,.5);
+    }
+    .dealershoplogo{
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 10px;
+    }
+    .dealershoplogo > img{
+        max-width: 50px;
+        height: 40px;
+    }
+    .dealershopcar_classification{
+        font-size: 14px;
+    }
+    .dealershopcarlist{
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: flex-start;
+        align-content: space-between;
+        color: #fff;
+    }
+</style>
+
+<script>
+    import apiAll from '@/http/apiAll.js'
+    import Toast from 'muse-ui-toast'
+    export default {
+        data () {
+            return {
+                company:{
+                    companyId: this.$route.params.id,
+                    companyName: this.$route.params.name,
+                    companyLogo: this.$route.params.logo,
+                },
+                
+                openAlertDrive:false,//预约试驾
+                openFloorPrice:false,//询问底价
+                open: false,
+                trigger: null,
+                active1: 0,
+                SpecialSaleModel:[],//特卖会车型
+                list:[
+                        {
+                            tabs:'特卖活动',
+                            content:'发送到发送到'
+                        },
+                        {
+                            tabs:'询问底价',
+                            content:'gdfgdfgdf,;l'
+                        }
+                ],
+                openAlertDriveForm:{
+                    name:'',
+                    phone:''
+                },
+                //预约试驾
+                usernameRules: [
+                                    { validate: (val) => !!val, message: '请填写用户名'},
+                                ],
+                phoneRules: [
+                                    { validate: (val) => !!val, message: '请填写手机号码便于工作人员联系您'},
+                                    { validate: (val) => val.length <= 11, message: '密码长度为11位'},
+                                    { validate: (val) => /^[1][3,4,5,7,8][0-9]{9}$/.test(val), message: '请输入正确手机号'}
+                                ],
+                openFloorPriceForm:{
+                    name:'',
+                    phone:''
+                },
+                //询问底价
+                pricenameRules: [
+                                    { validate: (val) => !!val, message: '请填写用户名'},
+                                ],
+                pricephoneRules: [
+                                    { validate: (val) => !!val, message: '请填写手机号码便于工作人员联系您'},
+                                    { validate: (val) => val.length <= 11, message: '密码长度为11位'},
+                                    { validate: (val) => /^[1][3,4,5,7,8][0-9]{9}$/.test(val), message: '请输入正确手机号'}
+                                ],
+            }
+        },
+        created(){
+            console.log(this.$route.params.id);
+            let a = this.$route.params.item;
+            let b = JSON.parse(a)
+            console.log(b);
+            //特卖活动车型
+            this.getGroupPurchList();
+            this.getOnlineConsultationPrice();
+        },
+        mounted(){
+            
+        },
+        methods:{
+            //特卖活动车型
+             getGroupPurchList: async function(){
+                let companyId = {
+                    companyId:this.company.companyId
+                }
+                try{
+                    let res =await apiAll.getPurchList(companyId);
+                    console.log(res)
+                    if(res.data != null && res.data != undefined){
+                        this.SpecialSaleModel = res.data;
+                    }
+                }catch(e){
+                    Toast.error({
+                        message:'网络故障导致无数据',
+                        infoIcon:'info',
+                        errorIcon:'warning'
+                    })
+                }
+                
+            },
+            //在售车型>询底价+预约试车
+            getOnlineConsultationPrice: async function(){
+                // debugger
+                let that = this;
+                let companyId = {
+                    id: that.$route.params.id
+                }
+                try{
+                    let parasm = await apiAll.getOnlineOpenFloorprice(companyId);
+                    console.log(parasm);
+                }catch(e){
+                    Toast.error({
+                        message:'网络故障导致无数据',
+                        infoIcon:'info',
+                        errorIcon:'warning'
+                    })
+                }
+            },
+            //预约试驾
+            openAlertdrive(){
+                this.openAlertDrive = true
+            },
+            openAlertDriveFormsubmit(){
+                this.$refs.driveForm.validate().then((result) => {
+                    console.log('form valid: ', result)
+
+                    this.$refs.driveForm.clear();
+                    this.openAlertDriveForm = {
+                        name: '',
+                        phone: '',
+                    };
+                    this.openAlertDrive = false
+                });
+            },
+            openAlertDriveFormclear(){
+                this.$refs.driveForm.clear();
+                this.openAlertDriveForm = {
+                    name: '',
+                    phone: '',
+                };
+                this.openAlertDrive = false
+            },
+            //询问底价
+            openFloorprice(){
+                this.openFloorPrice = true
+            },
+            PriceFormsubmit(){
+                this.$refs.priceForm.validate().then((result) => {
+                    console.log('form valid: ', result)
+
+                    this.$refs.priceForm.clear();
+                    this.openAlertDriveForm = {
+                        name: '',
+                        phone: '',
+                    };
+                    this.openFloorPrice = false
+                });
+            },
+            PriceFormFormclear(){
+                this.$refs.priceForm.clear();
+                this.openAlertDriveForm = {
+                    name: '',
+                    phone: '',
+                };
+                this.openFloorPrice = false
+            },
+            
+        }
+    }
+</script>

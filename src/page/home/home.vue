@@ -1,0 +1,849 @@
+<template>
+    <div class="home">
+      <div class="home_header_banner">
+        <mu-carousel>
+          <mu-carousel-item v-for="(item,index) in navBrandLists" :key="index" >
+            <router-link to="/news">
+            <img :src="item.img">
+            </router-link>
+          </mu-carousel-item>
+        </mu-carousel>
+      </div>  
+        <!-- 品牌list -->
+        <div class="home_brand_list">
+          <mu-flex justify-content="center">
+            <ul>
+              <li v-for="(item,index) in newBrandLists.slice(0,10)" :key="index">
+                <a @click="CarmodeList(item[0])" class="ablock">
+                  <img :src="item[0].logo.length <= 10 ? item[0].logo : item[0].logo" class="img-responsvie" alt="">
+                  <p>{{item[0].name}}</p>
+                </a>
+              </li>
+              <!-- <li>
+                <img src="@static/images/chezhan/100x100_2.png" alt="">
+                <p>更多</p>
+              </li> -->
+            </ul> 
+          </mu-flex>
+
+          <!-- 更多动画 找车-->
+          <div class="moreDiv">
+            <div class="MoreBrand" @click="FindCar">
+              <i class="iconfont">&#xe615;</i>
+              <p>更多</p>
+            </div>
+          </div>
+          
+        </div>
+        <!-- <mu-divider></mu-divider> -->
+        <!-- 头条 -->
+        <section class="car_wrap_list">
+          <mu-list >
+            <span class="before"></span>
+            <mu-list-item button :ripple="false">
+              <mu-list-item-action>
+                <mu-badge content="头条" color="secondary"></mu-badge>
+              </mu-list-item-action>
+              <mu-list-item-title>2017新车质量报告:中大型SUV篇</mu-list-item-title>
+            </mu-list-item>
+          </mu-list>
+        </section>
+        <!-- 广告 -->
+        <section class="Advertisement ">
+          <a href="javascript:;">
+            <img src="@static/images/chezhan/wKgHEVtQZIKAUD23AABA2pl64dc491.jpg" alt="">
+            <span class="AdvertisementSpan"></span>
+          </a>
+        </section>
+        <!-- 各地车展秀 -->
+        <section class="autoshow_list pt10">
+          <div class="autoshow_content">
+            <div class="autoshow_title p15">
+              <mu-list-item-action>
+                <!-- <mu-badge content="车展秀" color="primary"></mu-badge> -->
+                <span class="mu-badge mu-primary-color">车展秀</span>
+              </mu-list-item-action>
+            </div>
+            <mu-divider></mu-divider>
+              <!-- 车展列表 -->
+            <div class="autoshow_midd iphone678_plus">
+              <mu-row gutter class="row_m0">
+                <mu-col span="12" sm="12" md="12" lg="6" xl="6" class="pr_pl15 pt15 pb8 view_cell_after after_last" 
+                  v-for="(item,index) in autoshowList" :key="index" 
+                   @click="autoshowNewDetails(item.id,item.cityId,item.bigImage,item.cityName)">
+                  <div class="grid-cell">
+                    <div class="img_vw100">
+                      <a class="ablock" >
+                        <img :src="item.titleImage" alt="">
+                      </a>
+                    </div>
+                    <div class="img_text">
+                      <dl class="pt10">
+                        <dt><span class="iconfont icon-weizhi pr3"></span>{{item.cityName}}</dt>
+                        <dt><span class="iconfont icon-web-icon- pr3"></span>{{item.beginTime}}</dt>
+                        <dt><span class="iconfont icon-dianhua1 pr3"></span>{{item.ticketCall}}</dt>
+                      </dl>
+                    </div>
+                  </div>
+                </mu-col>
+              </mu-row>
+            </div>
+            
+            <!-- 车展新闻 -->
+            <div class="autoshow_news_list">
+              <mu-divider></mu-divider>
+              <div class="autoshow_text_img">
+                <div class="view_cell_after after_last" v-for="(item,index) in homeAutoShowNews" :key="index">
+                  <a @click="toNews(item.id,item.content,item.title,item.createTime)" class=" ablock">
+                    <mu-row gutter class="row_m0_p157">
+                      <mu-col span="8" sm="8" lg="7" md="7" xl="8">
+                        <ul class="news_text">
+                          <div class="title_text">{{item.title}}</div>
+                          <!-- <li>{{item.news}}</li> -->
+                        </ul>
+                      </mu-col>
+                      <mu-col span="4" sm="4" lg="5" md="5" xl="4">
+                        <div class="img_box">
+                            <img :src="item.titleImgage" alt="" class="img-responsive">
+                        </div>
+                      </mu-col>
+                    </mu-row>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- 团购 -->
+        <section class="grouppurch_list pt10">
+          <div class="grouppurch_content bg_fff">
+            <div class="lg_title p15">
+              <mu-list-item-action>
+                <!-- <mu-badge content="团购" color="secondary"></mu-badge> -->
+                <span class="mu-badge mu-secondary-color">团购</span>
+              </mu-list-item-action>
+            </div>
+            <mu-divider></mu-divider>
+              <!-- 团购列表 -->
+            <div class="group_midd iphone678_plus common_row_col">
+              <mu-row gutter class="row_m0">
+                <mu-col span="12" sm="12" md="12" lg="6" xl="6" class="pr_pl15 pt15 pb10 view_cell_after after_last ablock"
+                   v-for="(item,index) in GroupPurchLists" :key="index">
+                  <div class="grid-cell">
+                    <div class="img_vw100">
+                      <a @click="SpecialSalegroupPuSignUp(item.id,item)" class="ablock">
+                      <img :src="item.titleImgage" alt="">
+                      </a>
+                    </div>
+                    <div class="img_text">
+                      <h5 class="pt10">{{item.name}}</h5>
+                      <dl class="">
+                        <dt><span class="iconfont icon-weizhi pr3"></span>{{item.address}}</dt>
+                        <dt><span class="iconfont icon-web-icon- pr3"></span>{{item.startTime}} 至 {{item.endTime}}</dt>
+                        <!-- <dt>{{item.cityName}}</dt> -->
+                      </dl>
+                    </div>
+                  </div>
+                </mu-col>
+              </mu-row>
+            </div>
+            
+            <!-- 网上团购新闻 -->
+            <div class="group_news">
+              <mu-divider></mu-divider>
+              <div class="group_text_img">
+                <div v-for="(item,index) in onlineGroupNews" :key="index" class="view_cell_after after_last">
+                <a @click="toOnlineGroupNews(item.id,item.content,item.title,item.createTime)" class=" ablock">
+                  <mu-row gutter class="row_m0_p157">
+                    <mu-col span="8" sm="8" lg="7" md="7" xl="8">
+                      <ul class="news_text">
+                        <div class="title_text">{{item.title}}</div>
+                        <!-- <li>{{item.news}}</li> -->
+                      </ul>
+                    </mu-col>
+                    <mu-col span="4" sm="4" lg="5" md="5" xl="4">
+                      <div class="img_box">
+                          <img :src="item.titleImgage" alt="" class="img-responsive">
+                      </div>
+                    </mu-col>
+                  </mu-row>
+                </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- 品牌特卖会 -->
+        <section class="brand_Special_sale pt10">
+          <div class="brand_banner pb15">
+            <div class="lg_title p15">
+              <mu-list-item-action>
+                <!-- <mu-badge content="品牌特惠" color="secondary"></mu-badge> -->
+                <span class="mu-badge mu-secondary-color">品牌特惠深圳专场</span>
+              </mu-list-item-action>
+            </div>
+            <mu-divider></mu-divider>
+            <mu-carousel transition="fade" hide-controls>
+              <div class="branner_top_img">
+                <mu-carousel-item v-for="(item,index) in brandspecials" :key="index" >
+                  <a href="javascript:;">
+                  <img :src="item.img">
+                  </a>
+                  <div class="brand_name">
+                    <mu-list>
+                      <mu-list-item  button :ripple="false">
+                        <mu-list-item-action >
+                          <mu-avatar>
+                            <img :src="item.brandLogo" alt="">
+                          </mu-avatar>
+                        </mu-list-item-action>
+                        <mu-list-item-content>
+                          <mu-list-item-title>{{item.brand}}</mu-list-item-title>
+                          <mu-list-item-sub-title>
+                            <span class="text-999">当前有<em class="text-red">{{item.people}}</em>人报名</span>
+                          </mu-list-item-sub-title>
+                        </mu-list-item-content>
+                      </mu-list-item>
+                    </mu-list>
+                    <mu-flex justify-content="center" align-items="center">
+                      <mu-button round small color="primary">免费参与</mu-button>
+                    </mu-flex>
+                  </div>
+                </mu-carousel-item>
+              </div>
+            </mu-carousel>
+            
+          </div>
+        </section>
+        <!-- 车型特卖 -->
+        <section class="car_Special_sale pt10">
+          <div class="car_Spacial_lists ">
+            <div class="lg_title p15">
+              <mu-list-item-action>
+                <span class="mu-badge mu-secondary-color">车型特卖活动</span>
+              </mu-list-item-action>
+            </div>
+            <mu-divider></mu-divider>
+            <!-- 车型列表 -->
+            <div class="car_Spacial_col">
+              <div class="common_pdd">
+                <mu-row gutter class="row_m0">
+                  <mu-col span="6" sm="6" md="6" lg="6" xl="6" v-for="(item,index) in carSpacialList" :key="index" class="pt10">
+                    <div class="grid-cell">
+                      <div class="groupPurchvue_groupList">
+                        <a @click="signUp($event,carId[index],item)" class="ablock">
+                        <img :src="item.titleImgage" alt="" class="img-responsive">
+                        </a>
+                      </div>
+                      <div class="car_spacial_text pt8_pb8">
+                        <h5 class="text_center">{{item.name}}</h5>
+                        <dl class="text_center">
+                          <dt class="text-999">当前有<em class="text-red">{{item.carSeries.length==0 ? '0' : item.carSeries.length}}</em>人报名</dt>
+                        </dl>
+                      </div>
+                    </div>
+                  </mu-col>
+                </mu-row>
+              </div>
+            </div>
+            <!-- 现场团购新闻 -->
+            <div class="car_grouppurch_news ">
+              <div class="lg_title p15 pb0">
+                <!-- <mu-badge content="12" circle color="secondary"  class="demo-icon-badge"> -->
+                  <!-- <h4 class="h4_mgin">商家特卖会新闻</h4> -->
+                <!-- </mu-badge> -->
+              </div>
+              <mu-divider></mu-divider>
+              <div class="carSpecial_text_img">
+                <div v-for="(item,index) in sceneGroupNews" :key="index" class="view_cell_after after_last">
+                <a @click="toSceneGroupNews(item.id,item.content,item.title,item.createTime)" class=" ablock">
+                  <mu-row gutter class="row_m0_p157">
+                    <mu-col span="8" sm="8" lg="7" md="7" xl="8">
+                      <ul class="grouppurch_news_text news_text">
+                        <div class="title_text">{{item.title}}</div>
+                        <!-- <li>{{item.news}}</li> -->
+                      </ul>
+                    </mu-col>
+                    <mu-col span="4" sm="4" lg="5" md="5" xl="4">
+                      <div class="img_box">
+                          <img :src="item.titleImgage" alt="" class="img-responsive">
+                      </div>
+                    </mu-col>
+                  </mu-row>
+                </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- 资讯+广告+新闻 -->
+        <section class="information_Advertisement_news pt10" style="display:none">
+          <div class="bg_fff">
+            <div class="Info_Adver_Nw view_cell_after"  v-for="(item,index) in Info_Adver_Nw" :key="index">
+              <a href="javascript:;" class="ablock pt10_pb15_pr15_pl15">
+                <h4 class="h4_mgin">{{item.title}}</h4>
+                <mu-flex class="flex-wrapper" align-items="center" >
+                  <mu-flex class="flex-demo" justify-content="center" fill v-for="(n,index) in item.imgs" :key="index">
+                    <img :src="n.carImg" alt="" class="img-responsive">
+                  </mu-flex>
+                </mu-flex>
+              </a>
+            </div>
+          </div>
+          <mu-list textline="two-line">
+            <mu-list-item avatar :ripple="false" button>
+              <mu-list-item-content>
+                <mu-list-item-title>Ali Connors</mu-list-item-title>
+                <mu-list-item-sub-title style="color: rgba(0, 0, 0, .87)">Brunch this weekend?</mu-list-item-sub-title>
+                <mu-list-item-sub-title>
+                  I'll be in your neighborhood doing errands this weekend. Do you want to hang out?
+                </mu-list-item-sub-title>
+              </mu-list-item-content>
+              <mu-list-item-action >
+                <mu-list-item-after-text>15 min</mu-list-item-after-text>
+                <mu-checkbox color="yellow700"  value="value1" uncheck-icon="star_border" checked-icon="star"></mu-checkbox>
+              </mu-list-item-action>
+            </mu-list-item>
+            <mu-divider></mu-divider>
+            <mu-list-item avatar :ripple="false" button>
+              <mu-list-item-content>
+                <mu-list-item-title>Ali Connors</mu-list-item-title>
+                <mu-list-item-sub-title style="color: rgba(0, 0, 0, .87)">Brunch this weekend?</mu-list-item-sub-title>
+                <mu-list-item-sub-title>
+                  I'll be in your neighborhood doing errands this weekend. Do you want to hang out?
+                </mu-list-item-sub-title>
+              </mu-list-item-content>
+              <mu-list-item-action >
+                <mu-list-item-after-text>15 min</mu-list-item-after-text>
+                <mu-checkbox color="yellow700"  value="value1" uncheck-icon="star_border" checked-icon="star"></mu-checkbox>
+              </mu-list-item-action>
+            </mu-list-item>
+            <mu-divider></mu-divider>
+          </mu-list>
+        </section>
+        <!-- 回到顶部 -->
+        <transition name="fade" mode="out-in">
+            <div class="scroll_top " v-show="$store.state.showTop" @click="TopScroll">
+                <span class="iconfont icon-triangle-up"></span>
+            </div>
+        </transition>
+    </div>
+</template>
+<style >
+@import '../../assets/home.css';
+.moreDiv{
+  position:relative;
+  height:50px;
+  display: flex;
+  justify-content: center;
+  flex-flow: column nowrap;
+  align-items: center;
+}
+.MoreBrand{
+  position: absolute;
+  right: 20px;
+  /* left: 20px;
+  top: 50%; */
+  width: 80%;
+  padding: 0 5px;
+  /* transform: translateY(-50%); */
+  text-align: center;
+  border-radius: 4px;
+  background: rgba(255,64,129, .8);
+  color: #fff;
+  animation: myfirst 1.5s infinite;
+  -moz-animation: myfirst 1.5s infinite;	/* Firefox */
+  -webkit-animation: myfirst 1.5s infinite;	/* Safari 和 Chrome */
+  -o-animation: myfirst 1.5s infinite;	/* Opera */
+}
+
+@keyframes myfirst
+{
+  0% {right: 6%;}
+  50% {right: 14%;}
+  100% {right: 6%;}
+}
+
+@-moz-keyframes myfirst 
+{
+  0% {right: 6%;}
+  50% {right: 14%;}
+  100% {right: 6%;}
+}
+
+@-webkit-keyframes myfirst 
+{
+  0% {right: 6%;}
+  50% {right: 14%;}
+  100% {right: 6%;}
+}
+
+@-o-keyframes myfirst 
+{
+  0% {right: 6%;}
+  50% {right: 14%;}
+  100% {right: 6%;}
+}
+.MoreBrand > p{
+  margin: 0;
+  font-size: 14px;
+}
+
+.brand_name{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+.branner_top_img .mu-carousel-item > a > img{
+  top:0%;
+  transform: translate(-50%,0%);
+}
+
+.common_pdd .grid-ell{
+  padding: 10px 10px 0;
+}
+
+.brand_banner .mu-carousel{
+  height: auto;
+  padding-bottom: 25px;
+}
+.brand_banner .mu-carousel-indicators{
+  height: auto;
+  bottom: 0px;
+}
+.brand_banner .mu-carousel-indicator-icon{
+  background-color: #ff4081;
+}
+.brand_banner .mu-carousel .branner_top_img{
+  height: 82vw;
+  position: relative;
+}
+.brand_name .mu-avatar{
+  height: 50px !important;
+  width: 50px !important;
+  border-radius: 0;
+  background: none;
+}
+.brand_name .mu-avatar img{
+  border-radius: 0;
+}
+
+.img_text h5{
+  margin: 0;
+  font-size: 16px;
+  font-weight: 100;
+}
+.img_text > dl{
+  margin: 0;
+  font-size: 14px;
+  color: rgba(0,0,0,0.37);
+  line-height: initial;
+}
+
+.autoshow_title .mu-badge{
+  font-size: 18px;
+}
+
+.autoshow_title h4{
+  margin: 0px;
+}
+
+.home_brand_list, .car_wrap_list{
+  background:#fff;
+}
+.car_wrap_list .mu-list{
+  padding: 0px;
+}
+
+.home_brand_list .flex-row ul{
+  margin: 0px;
+  padding: 0px 0px 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.home_brand_list .flex-row ul li{
+  list-style: none;
+  width: 20%;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content:center;
+  align-content:center;
+  padding: 5px;
+  text-align: center;
+}
+.flex-row ul li a > img{
+  width: 55px;
+  height: 55px;
+  align-self: center;
+}
+.flex-row ul li a > p{
+  margin: 0;
+  padding-top: 5px;
+  font-size: 12px;
+}
+
+
+</style>
+ 
+<script>
+import apiAll from '@/http/apiAll'
+import Toast from 'muse-ui-toast'
+import { mapMutations,mapActions } from 'vuex'
+export default {
+  name: "home",
+  data() {
+    return {
+      //头部banner
+      navBrandLists:[
+        {
+          img:require('@static/images/chezhan/1280x640_0_q40_autohomecar__wKgHJFtfubqAR4_pAAS_HULN5Co414.jpg')
+        },
+        {
+          img:require('@static/images/chezhan/1280x640_0_q40_autohomecar__wKgHFFtf6DyATWmCAApErLaD5OE529.jpg')
+        },
+        {
+          img:require('@static/images/chezhan/1280x640_0_q40_autohomecar__ChcCR1taxbaAK6u6AAfo1c-JG88809.jpg')
+        },
+        {
+          img:require('@static/images/chezhan/1280x640_0_q40_autohomecar__wKgHI1tfrqmAdLORAAW3BI5tbVo098.jpg')
+        }
+      ],
+      Info_Adver_Nw: [
+        {
+          title: "终于没白等！丰田全新7座SUV车长4720mm",
+          imgs: [
+            {
+              carImg: require('@static/images/chezhan/20180521022135229.jpg')
+            },
+            {
+              carImg: require('@static/images/chezhan/20180604031303244.jpg')
+            },
+            {
+              carImg: require('@static/images/chezhan/20180528120047429.jpg')
+            }
+          ]
+        },
+        {
+          title: "北京AR车展盛大来袭，极致视觉盛宴。",
+          imgs: [
+            {
+              carImg: require('@static/images/chezhan/20180521022135229.jpg')
+            },
+            {
+              carImg: require('@static/images/chezhan/20180604031303244.jpg')
+            },
+            {
+              carImg: require('@static/images/chezhan/20180528120047429.jpg')
+            }
+          ]
+        }
+      ],
+      //品牌特惠深圳专场banner
+      brandspecials: [
+        {
+          brandLogo: require('@static/images/chezhan/c30f9181-e668-4049-8533-6bb449f4d133.png'),
+          img: require('@static/images/chezhan/bdb3cec1-cf44-410a-89fe-e2c07ab8196f.jpg'),
+          brand: "东方本田",
+          people: 68,
+        },
+        {
+          brandLogo: require('@static/images/chezhan/84ccb6eb-2068-43d9-83f2-85feaca2147b.png'),
+          img: require('@static/images/chezhan/1280x640_0_q40_autohomecar__wKgHFFtf6DyATWmCAApErLaD5OE529.jpg'),
+          brand: "奔驰",
+          people: 58,
+        },
+        {
+          brandLogo: require('@static/images/chezhan/14612048991063020_s.jpg'),
+          img: require('@static/images/chezhan/1280x640_0_q40_autohomecar__ChcCR1taxbaAK6u6AAfo1c-JG88809.jpg'),
+          brand: "宝马",
+          people: 88,
+        },
+      ],
+      newBrandLists:[],
+      autoshowList: [],//车展列表
+      GroupPurchLists: [],//团购列表
+      homeAutoShowNews:[],//首页车展新闻列表
+      onlineGroupNews:[],//网上团购新闻列表
+      sceneGroupNews:[],//现场团购新闻列表
+      carSpacialList: [],//车型特卖活动
+      cityId:'',
+      carId:[],
+    }
+    
+  },
+   created () {
+            this.$store.state.showTopNav = true;//头部导航显示
+            //车展列表
+            this.AutoShowGetList();
+              //团购列表
+            this.GroupPurchList();
+            // console.log(localStorage.getItem('loglevel:webpack-dev-server'))
+            //获取首页新闻
+            this.getNewlist();
+            //车型特卖活动车型列表
+            this.groupCarList();
+            //网上团购新闻
+            this.onlineGroupNewsList();
+            //现场团购新闻
+            this.sceneGroupNewsList();
+            //获取车品牌
+            this.getCarBrand();
+        },
+  mounted () {
+    // console.log(this.$route);
+    const _this = this
+    window.addEventListener('scroll', _this.handleScroll);
+  },
+  methods: {
+    ...mapMutations(['handleScroll']),
+    ...mapActions(['addAction','TopScroll']),
+      
+    //车展新闻详情
+    autoshowNewDetails(id,cityId,bigImage,cityName){
+      this.$router.push({
+        name:'autoshowNew',
+        params:{
+          id:id,
+          cityId:cityId,
+          bigImage:bigImage,
+          cityName:cityName
+          }
+        })
+    },
+    //更多车
+    FindCar(){
+      // alert(1);
+      this.$router.push({
+        name:'findcar',
+
+      })
+    },
+    //头部品牌车型list
+    CarmodeList(obj){
+      this.$router.push({
+        name:'carmodeLists',
+        params:{
+          objContent:JSON.stringify(obj)
+        }
+      })
+    },
+    //获取车品牌
+    async getCarBrand(){
+      let res = await apiAll.carBrand({});
+      console.log(res)
+      let newBrand = res.data || [];
+      let newlist = newBrand.map(val => val.brandList)
+      this.newBrandLists = newlist
+      console.log(this.newBrandLists)
+    },
+    ////网上团购新闻
+    async onlineGroupNewsList(){
+      let params = {
+        type:1,
+        nnNewsCode:"tuangou_wangshang",
+        currentPage:1,
+        pageSize:12
+      }
+      try{
+        let res =await apiAll.getNewList(params);
+        // console.log(res)
+        if(res.data != null && res.data != undefined){
+          this.onlineGroupNews = res.data;
+        }
+      }catch(e){
+        Toast.error({
+          message:'网络错误或者没有数据',
+          position:'top',
+          errorIcon: 'warning'
+        })
+      }
+    },
+    //网上团购新闻
+    toOnlineGroupNews(id,content,title,createTime){
+      this.$router.push({
+        name:'news',
+        params:{
+          id:id,
+          content:content,
+          title:title,
+          createTime:createTime
+        }
+      })
+    },
+    ////现场团购新闻
+    async sceneGroupNewsList(){
+      let params = {
+        type:1,
+        nnNewsCode:"tuangou_xianchang",
+        currentPage:1,
+        pageSize:12
+      }
+      try{
+        let res =await apiAll.getNewList(params);
+        // console.log(res)
+        if(res.data != null && res.data != undefined){
+          this.sceneGroupNews = res.data;
+        }
+      }catch(e){
+        Toast.error({
+          message:'网络错误或者没有数据',
+          position:'top',
+          errorIcon: 'warning'
+        })
+      }
+    },
+    //现场新闻
+    toSceneGroupNews(id,content,title,createTime){
+      this.$router.push({
+        name:'news',
+        params:{
+          id:id,
+          content:content,
+          title:title,
+          createTime:createTime
+        }
+      })
+    },
+    //车型特卖活动车型列表
+    async groupCarList(){
+        var params = {
+            currentPage:1,
+            pageSize:8,
+            timeType:2
+          }
+        try{
+          
+          let carList = await apiAll.getGroupList(params);
+          // console.log(carList)
+          if(carList.data !=null && carList.data !=undefined){
+            this.carSpacialList = carList.data;
+            for(let i = 0; i < carList.data.length; i++){
+              this.carId.push(carList.data[i].id); 
+              // console.log(carList.data[i].id)
+              // console.log(carList.data[i].carSeries.length)
+            }
+           
+          }
+          
+        }catch(e){
+          this.$alert('请求错误','提示',{
+                errorIcon: 'warning',
+                iconSize: 24,
+                width: '80%',
+                transition: 'scale',
+                okLabel: '确定',
+          })
+        }
+      },
+
+      //团购活动
+    SpecialSalegroupPuSignUp(id,item){
+      this.$store.commit('togroupSign',{id,item})
+      this.$router.push({
+        name:`groupPuSignUp`,
+        params:{
+          id:id,
+          content:JSON.stringify(item)
+        }
+      })
+    },
+    //车型团购活动报名
+    signUp(e,id,item){
+          e.preventDefault();
+          // console.log(id)
+          this.$store.commit('togroupSign',{id,item})
+          this.$router.push(
+                {
+                  name:'groupPuSignUp',
+                  params: {
+                      name: 'zhuxyong',
+                      age:28,
+                      id:id,
+                      content:JSON.stringify(item)
+                  }
+                }
+          )
+      },
+    //新闻
+    toNews(id,content,title,createTime){
+      this.$store.commit('NewsDetails',{id,content,title,createTime})
+      this.$router.push({
+        name:'news',
+        params:{
+          id:id,
+          content:content,
+          title:title,
+          createTime:createTime
+        }
+      })
+    },
+    //获取新闻
+    async getNewlist(){
+      try{
+        let params = {
+          type:1,
+          nnNewsCode:"home",
+          cityId: this.cityId
+        }
+        let res =await apiAll.getNewList(params);
+        // console.log(res)
+        if(res.data != null && res.data != undefined){
+          this.homeAutoShowNews = res.data;
+        }
+      }catch(e){
+        this.$toast.error({
+          message:'网络错误',
+          position:'top',
+          errorIcon: 'warning'
+        })
+      }
+    },
+    //车展列表
+    async AutoShowGetList(){
+      try{
+        let res = await apiAll.AutoShowGetList({});
+        // console.log(res)
+        if(res.data != null && res.data != undefined){
+           this.autoshowList = res.data;
+              let autoShowList = res.data;
+               const findval = autoShowList.find(val => {return val})
+              //  console.log(findval)
+               this.cityId = findval.cityId
+           }
+        
+      }catch(e){
+        // console.log(e)
+        this.$toast.error('网络请求超时!');
+      }
+    },
+    //团购列表
+    async GroupPurchList(){
+      try{
+        let groupList = await apiAll.GroupPurchGetList({});
+        console.log(groupList)
+        if(groupList != null && groupList.data !=null && groupList.data !=undefined){
+          this.GroupPurchLists = groupList.data
+        }
+      }catch (e){
+        // console.log(e)
+        Toast.error({
+          message:'网络请求错误',
+          errorIcon: 'warning',
+          position:'top',
+          infoIcon: 'info',
+       })
+      }
+    }
+  },
+  //销毁钩子
+   beforeDestroy() {
+    const _this = this
+    document.documentElement.removeEventListener('scroll', _this.handleScroll, true)
+ },
+  
+}
+</script>

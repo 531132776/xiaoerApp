@@ -1,0 +1,533 @@
+<template>
+    <div class="dealershop common_news">
+        <!-- 头部标题 -->
+        <mu-paper :z-depth="1" class="demo-loadmore-wrap">
+          <mu-appbar color="teal">
+            <mu-button icon slot="left" @click="$router.back(-1)">
+              <mu-icon value=":iconfont icon-zuo headerZuo"></mu-icon>
+            </mu-button>
+            商家主页
+            <!-- <mu-button icon slot="right" class="navIcon" ref="button" @click="open = !open">
+              <mu-icon value="menu"></mu-icon>
+            </mu-button> -->
+            <div slot="right" @click="open = !open" ref="button" class="headerNavRight">
+              导航
+            </div>
+            <div >
+              <mu-popover class="titleNav" cover :open.sync="open" :trigger="trigger" placement="left-start">
+                <mu-list>
+                  <mu-list-item button v-for="(item,index) in $store.state.routelist" :key="index">
+                    <mu-list-item-title>
+                      <router-link :to="item.path">{{item.title}}</router-link>
+                    </mu-list-item-title>
+                  </mu-list-item>
+                </mu-list>
+              </mu-popover>
+            </div>
+          </mu-appbar>
+        </mu-paper>
+        <!-- 内容区 -->
+        <section>
+            <div class="dealershopstoreimg">
+                <mu-row>
+                    <mu-col span="12" class="dealershopstore_imgHeight">
+                        <img :src="this.objItem.shopPicture == null ? defaultDealershopImg : 'http://39.108.53.107:9098/'+this.objItem.shopPicture+''" alt="" class="img-responsive">
+                    </mu-col>
+                </mu-row>
+                <div class="dealershopbrand pr_pl15 pt_pb10">
+                    <div class="dealershoplogo">
+                        <img :src="'http://39.108.53.107:9098/'+this.company.companyLogo+''" alt="" >
+                    </div>
+                    <div class="dealershopcarlist">
+                        <div class="dealershoptitle">{{this.company.companyName}}</div>
+                        <div class="dealershopcar_classification text-999">
+                            <span>宝马一系</span><span>宝马2系</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pt10">
+                <div class="bg_fff">
+                    <div >
+                        <mu-tabs :value.sync="active1" class="bg_fff" inverse color="secondary" text-color="rgba(0, 0, 0, .54)"  center>
+                            <mu-tab  v-for="(item,index) in list" :key="index" >{{item.tabs}}</mu-tab>
+                        </mu-tabs>
+                        <mu-divider></mu-divider>
+                        <div class="demo-text" v-if="active1 === 0">
+                            <mu-list textline="two-line" >
+                                <div class="view_cell_after after_last xunwenlist pt_pb5"  v-for="(item,index) in SpecialSaleModel" :key="index" >
+                                    <mu-list-item avatar :ripple="false" button>
+                                    <mu-list-item-content>
+                                        <mu-list-item-title>{{item.name}}</mu-list-item-title>
+                                        <mu-list-item-sub-title style="color: rgba(0, 0, 0, .87)">
+                                            <span class="brandTga">{{item.seriesName}}</span>
+                                        </mu-list-item-sub-title>
+                                        <mu-list-item-sub-title>
+                                        已结束
+                                        </mu-list-item-sub-title>
+                                    </mu-list-item-content>
+                                    <mu-list-item-action >
+                                        <mu-list-item-after-text><em class="text-red">{{item.intentionerNumber}}</em><em class="text-999">人报名</em></mu-list-item-after-text>
+                                        <mu-list-item-sub-title class="temaihuibtn">
+                                            <mu-button small color="secondary" @click="ViewTheDetails(item.id,item.seriesId,item.companyId,item)">查看详情</mu-button>
+                                        </mu-list-item-sub-title>
+                                    </mu-list-item-action>
+                                    </mu-list-item>
+                                </div>
+                            </mu-list>
+                            
+                        </div>
+                        <div class="demo-text" v-if="active1 === 1">
+                            <mu-list textline="two-line">
+                                <div class="view_cell_after after_last xunwenlist pt_pb10" v-for="(item,index) in OnlineConsultationPrice" :key="index">
+                                    <mu-list-item avatar :ripple="false" button>
+                                    <mu-list-item-content>
+                                        <div class="nkilca">
+                                            <img :src="'http://39.108.53.107:9098/'+item.carSeries.image+''" alt="" class="img-responsive">
+                                        </div>
+                                        <mu-list-item-sub-title>
+                                        {{item.carSeries.name}} <em>小型车</em>
+                                        </mu-list-item-sub-title>
+                                    </mu-list-item-content>
+                                    <mu-list-item-action >
+                                        <mu-list-item-after-text><em class="text-red">{{item.minMprice | numFilter}}-{{item.maxMprice}}万</em></mu-list-item-after-text>
+                                        <mu-list-item-sub-title>
+                                        指导价：<em class="text_line_through">{{item.minCprice | numFilter}}-{{item.maxCprice}}万</em>
+                                        </mu-list-item-sub-title>
+                                        <mu-list-item-sub-title class="temaihuibtn">
+                                            <mu-button small color="primary" @click="openAlertdriveModal(item.seriesId,item.carSeries.name)">预约试驾</mu-button>
+                                            <mu-button small color="secondary" @click="openFloorprice(item.seriesId,item.carSeries.name)">询问底价</mu-button>
+                                        </mu-list-item-sub-title>
+                                    </mu-list-item-action>
+                                    </mu-list-item>
+                                </div>
+                            </mu-list>
+                            
+                        </div>
+                        <div class="demo-text" v-if="active1 === 2">
+                            <mu-list textline="two-line">
+                                <!-- <mu-sub-header inset>Folders</mu-sub-header> -->
+                                <mu-list-item avatar button :ripple="false" v-for="(item,index) in dealershopNews" :key="index" 
+                                @click="toNews(item.id,item.content,item.title,item.createTime)">
+                                    <!-- <mu-list-item-action>
+                                        <mu-avatar>
+                                        <mu-icon value="folder"></mu-icon>
+                                        </mu-avatar>
+                                    </mu-list-item-action> -->
+                                    <mu-list-item-content>
+                                        <mu-list-item-title>{{item.title}}</mu-list-item-title>
+                                        <mu-list-item-sub-title>发布时间: {{item.createTime}}</mu-list-item-sub-title>
+                                    </mu-list-item-content>
+                                </mu-list-item>
+                            </mu-list>
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+        </section>
+        <!-- 预约试驾 -->
+        <mu-dialog :title="drivecarSeriesname" width="80%" max-width="80%" :esc-press-close="false" :overlay-close="false" :open.sync="openAlertDrive">
+            <div class="openAlertDriveForm">
+                <mu-form ref="driveForm" :model="openAlertDriveForm" class="mu-demo-form">
+                    <mu-form-item label="用户名" prop="name" :rules="usernameRules">
+                        <mu-text-field v-model="openAlertDriveForm.name" label-float prop="name"></mu-text-field>
+                    </mu-form-item>
+                    <mu-form-item label="电话" prop="phone" :rules="phoneRules">
+                        <mu-text-field type="text" v-model="openAlertDriveForm.phone" label-float :max-length="11" prop="phone"></mu-text-field>
+                    </mu-form-item>
+                    <mu-form-item>
+                        <mu-button color="primary" @click="openAlertDriveFormsubmit">提交</mu-button>
+                        <mu-button @click="openAlertDriveFormclear">取消</mu-button>
+                    </mu-form-item>
+                </mu-form>
+            </div>
+            <!-- <mu-button slot="actions" flat color="primary" @click="openAlertDrive =! openAlertDrive">Disagree</mu-button> -->
+            <!-- <mu-button slot="actions" flat color="primary" @click="openAlertDrive =! openAlertDrive">Agree</mu-button> -->
+        </mu-dialog>
+        <!-- 询问底价 -->
+        <mu-dialog :title="FloorPricename" width="80%" max-width="80%" :esc-press-close="false" :overlay-close="false" :open.sync="openFloorPrice">
+            <div class="openFloorPriceForm">
+                <mu-form ref="priceForm" :model="openFloorPriceForm" class="mu-demo-form">
+                    <mu-form-item label="用户名" prop="name" :rules="pricenameRules">
+                        <mu-text-field v-model="openFloorPriceForm.name" label-float prop="name"></mu-text-field>
+                    </mu-form-item>
+                    <mu-form-item label="电话" prop="phone" :rules="pricephoneRules">
+                        <mu-text-field type="text" v-model="openFloorPriceForm.phone" label-float :max-length="11" prop="phone"></mu-text-field>
+                    </mu-form-item>
+                    <mu-form-item>
+                        <mu-button color="primary" @click="PriceFormsubmit">提交</mu-button>
+                        <mu-button @click="PriceFormFormclear">取消</mu-button>
+                    </mu-form-item>
+                </mu-form>
+            </div>
+        </mu-dialog>
+    </div>
+</template>
+<style>
+.openAlertDriveForm .mu-form .mu-form-item:last-child{
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+}
+.openAlertDriveForm .mu-form .mu-form-item:last-child .mu-form-item-content{
+    justify-content: space-between
+}
+    .nkilca {
+        max-width:150px;
+        height: 100px;
+    }
+    .xunwenlist .mu-item{
+        height: auto !important;
+    }
+    .brandTga{
+        display: inline-block;
+        padding: 0px 5px;
+        color: #fff;
+        background: #1cb0f6;
+        font-size: 12px;
+        border-radius: 20px;
+
+    }
+    .temaihuibtn .mu-raised-button{
+        min-width: auto !important;
+    }
+    .dealershopstoreimg{
+        position: relative;
+    }
+    .dealershoptitle{
+        font-size: 16px;
+        font-weight: 400;
+    }
+    .dealershopbrand{
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: flex-start;
+        align-items: center;
+        background: rgba(0,0,0,.5);
+    }
+    .dealershoplogo{
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 10px;
+    }
+    .dealershoplogo > img{
+        max-width: 50px;
+        height: 40px;
+    }
+    .dealershopcar_classification{
+        font-size: 14px;
+    }
+    .dealershopcarlist{
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: flex-start;
+        align-content: space-between;
+        color: #fff;
+    }
+</style>
+
+<script>
+    import apiAll from '@/http/apiAll.js'
+    import Toast from 'muse-ui-toast'
+    export default {
+        data () {
+            return {
+                company:{
+                    companyId: '',
+                    companyName: '',
+                    companyLogo: '',
+                },
+                defaultDealershopImg:require('@static/images/chezhan/ba3ed194-dc3b-466d-98ae-5c2143f6d588.jpg'),
+                openAlertDrive:false,//预约试驾
+                openFloorPrice:false,//询问底价
+                open: false,
+                trigger: null,
+                active1: 0,
+                SpecialSaleModel:[],//特卖会车型
+                OnlineConsultationPrice:[],//在售车型>询底价
+                drivecarSeriesname:'',//预约试驾的车型名
+                drivcarCssId:'',//预约试驾cssId
+                FloorpriceCssId:'',//询底价cssId
+                FloorPricename:'',//询底价
+                openAlertDriveForm:{ //预约试驾Form
+                    name:'',
+                    phone:''
+                },
+                //预约试驾
+                usernameRules: [
+                                    { validate: (val) => !!val, message: '请填写用户名'},
+                                ],
+                phoneRules: [
+                                    { validate: (val) => !!val, message: '请填写手机号码便于工作人员联系您'},
+                                    { validate: (val) => val.length <= 11, message: '密码长度为11位'},
+                                    { validate: (val) => /^[1][3,4,5,7,8][0-9]{9}$/.test(val), message: '请输入正确手机号'}
+                                ],
+                openFloorPriceForm:{ //询问底价form
+                    name:'',
+                    phone:''
+                },
+                //询问底价
+                pricenameRules: [
+                                    { validate: (val) => !!val, message: '请填写用户名'},
+                                ],
+                pricephoneRules: [
+                                    { validate: (val) => !!val, message: '请填写手机号码便于工作人员联系您'},
+                                    { validate: (val) => val.length <= 11, message: '密码长度为11位'},
+                                    { validate: (val) => /^[1][3,4,5,7,8][0-9]{9}$/.test(val), message: '请输入正确手机号'}
+                                ],
+                list:[
+                    {
+                        tabs:'特惠活动'
+                    },
+                    {
+                        tabs:'询问底价'
+                    },
+                    {
+                        tabs:'最新资讯'
+                    }
+                ],
+                currentCompanyId:'',
+                dealershopNews:[],
+                objItem:'',
+            }
+        },
+        created(){
+            this.$store.state.showTopNav = false;
+            
+            //利用vuex解决页面刷新数据为空的情况
+            console.log('fhkdsbfhsdahj',this.$store.state.name)
+            this.company.companyName = JSON.parse(sessionStorage.getItem('name')).companyName;
+            this.company.companyLogo = JSON.parse(sessionStorage.getItem('name')).companyLogo;
+            this.company.companyId = JSON.parse(sessionStorage.getItem('name')).companyId;
+            this.objItem = this.$store.state.name.item || JSON.parse(sessionStorage.getItem('name')).item;
+            console.log(this.company.companyId)
+            //特卖活动车型
+            this.getGroupPurchList();
+            //在售车型>询底价+预约试车
+            this.getOnlineConsultationPrice();
+            //商家新闻
+            this.dealershopNew();
+        },
+        mounted(){
+            
+             this.trigger = this.$refs.button.$el;
+             
+        },
+        //使用计算属性；name可当做全局变量使用
+        computed:{
+            name(){
+                return this.$store.state.name || JSON.parse(sessionStorage.getItem('name'));
+            }
+        },
+        //过滤价格后两位小数点
+        filters: {
+                numFilter(value) {
+                // 截取当前数据到小数点后两位
+                    let realVal = Number(value).toFixed(2)
+                    // num.toFixed(2)获取的是字符串
+                    return Number(realVal)
+                }
+        },
+        methods:{
+            //新闻
+            toNews(id,content,title,createTime){
+                this.$store.commit('NewsDetails',{id,content,title,createTime})
+                this.$router.push({
+                    name:'news',
+                    params:{
+                    id:id,
+                    content:content,
+                    title:title,
+                    createTime:createTime
+                    }
+                })
+            },
+            //商家新闻
+            async dealershopNew(){
+                console.log(this.company.companyId)
+                let data = {
+                    companyId:this.company.companyId
+                }
+                try{
+                    let res = await apiAll.dealershopNews(data);
+                    console.log(res);
+                    this.dealershopNews = res.data || [];
+                }catch(e){
+                    Toast.error({
+                        message:'当前商家目前没有任何资讯新闻',
+                        infoIcon:'info',
+                        errorIcon:'warning'
+                    })
+                }
+            },
+            //查看详情
+            ViewTheDetails(id,seriesId,companyId,itemObj){
+                this.$store.commit('dealershopSign',{id,seriesId,companyId,itemObj})
+                this.$router.push({
+                    name:'dealershopSignUp',
+                    params:{
+                        id:id,
+                        cssId:seriesId,
+                        companyId:companyId,
+                        item: JSON.stringify(itemObj)
+                    }
+                })
+                // console.log(this.bus.$emit('toString',seriesId))
+            },
+            //商家下的所有特卖活动车型
+             getGroupPurchList: async function(){
+                let companyId = {
+                    companyId:JSON.parse(sessionStorage.getItem('name')).companyId
+                }
+                try{
+                    let res =await apiAll.getPurchList(companyId);
+                    console.log(res)
+                    if(res.data != null && res.data != undefined){
+                        this.SpecialSaleModel = res.data;
+                    }
+                }catch(e){
+                    Toast.error({
+                        message:'网络故障导致无数据',
+                        infoIcon:'info',
+                        errorIcon:'warning'
+                    })
+                }
+                
+            },
+            //在售车型>询底价+预约试车
+            getOnlineConsultationPrice: async function(){
+                // debugger
+                let that = this;
+                let companyId = {
+                    id: JSON.parse(sessionStorage.getItem('name')).companyId
+                }
+                try{
+                    let parasm = await apiAll.getOnlineOpenFloorprice(companyId);
+                    console.log(parasm);
+                    if(parasm.data != null && parasm.data != undefined){
+                        this.OnlineConsultationPrice = parasm.data;
+                    }
+
+                }catch(e){
+                    Toast.error({
+                        message:'网络故障导致无数据',
+                        infoIcon:'info',
+                        errorIcon:'warning'
+                    })
+                }
+            },
+            
+            //预约试驾模态框
+            openAlertdriveModal(seriesId,carSeriesName){
+                this.drivecarSeriesname = carSeriesName;
+                this.drivcarCssId = seriesId;
+                this.openAlertDrive = true
+            },
+            //预约试驾报名
+            openAlertDriveFormsubmit(){
+                this.$refs.driveForm.validate().then((result) => {
+                    console.log('form valid: ', result)
+                    if(result){
+                        let data = {
+                        companyId: JSON.parse(sessionStorage.getItem('name')).companyId,
+                        cssId: this.drivcarCssId,
+                        name: this.openAlertDriveForm.name,
+                        phone: this.openAlertDriveForm.phone,
+                        type: 6
+                    }
+                    apiAll.companyIntentioner(data).then(res => {
+                        console.log(res)
+                        this.$toast.success({
+                            position: 'top',
+                            message:'报名成功',
+                            successIcon: 'check_circle',   // 成功信息图标
+                            infoIcon: 'info'
+                        })
+                        this.$refs.driveForm.clear();
+                        this.openAlertDriveForm = {
+                                name: '',
+                                phone: '',
+                            };
+                            this.openAlertDrive = false
+                        }).catch(e => {
+                            Toast.error({
+                                message: '报名失败',
+                                infoIcon: 'info',
+                                errorIcon: 'warning'
+                            })
+                        })
+                    }
+                    
+                });
+            },
+            //预约试驾报名关闭模态框
+            openAlertDriveFormclear(){
+                this.$refs.driveForm.clear();
+                this.openAlertDriveForm = {
+                    name: '',
+                    phone: '',
+                };
+                this.openAlertDrive = false
+            },
+            //询问底价模态框
+            openFloorprice(seriesId,carSeriesName){
+                this.FloorPricename = carSeriesName;
+                this.FloorpriceCssId = seriesId;
+                // console.log(this.FloorpriceCssId)
+                this.openFloorPrice = true
+            },
+            //询问底价报名
+            PriceFormsubmit(){
+                this.$refs.priceForm.validate().then((result) => {
+                    console.log('form valid: ', result)
+                    if(result){
+                        let data = {
+                            companyId: JSON.parse(sessionStorage.getItem('name')).companyId,
+                            cssId: this.FloorpriceCssId,
+                            name: this.openFloorPriceForm.name,
+                            phone: this.openFloorPriceForm.phone,
+                            type: 2
+                        }
+                    apiAll.companyIntentioner(data).then(res => {
+                        console.log(res)
+                        this.$toast.success({
+                            position: 'top',
+                            message:'询底价成功',
+                            successIcon: 'check_circle',   // 成功信息图标
+                            infoIcon: 'info'
+                        })
+                        this.$refs.priceForm.clear();
+                        this.openFloorPriceForm = {
+                            name: '',
+                            phone: '',
+                        };
+                        this.openFloorPrice = false
+                        }).catch(e => {
+                            Toast.error({
+                                message: '询底价失败',
+                                infoIcon: 'info',
+                                errorIcon: 'warning'
+                            })
+                        })
+                    }
+                    
+                });
+            },
+            //询底价关闭模态框
+            PriceFormFormclear(){
+                this.$refs.priceForm.clear();
+                this.openFloorPriceForm = {
+                    name: '',
+                    phone: '',
+                };
+                this.openFloorPrice = false
+            },
+        }
+    }
+</script>

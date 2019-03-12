@@ -1,0 +1,151 @@
+<template>
+    <div class="distributor">
+        <!-- 商家列表 -->
+        <section class="distributor_list pt10">
+            <div class="distributor_details ">
+                <div class="business_info">
+                    <mu-row gutter class="row_m0">
+                        <mu-col span="12" lg="6" xl="6" md="12" sm="12" class="pt_pb10 pr_pl15" v-for="(item,index) in business" :key="index">
+                            <a href="javascript:;" class="ablock view_cell_after after_last bg_fff p10">
+                                <div class="info_top pb10">
+                                    <mu-row gutter>
+                                        <mu-col span="5">
+                                            <div class="grid-cell">
+                                                <img :src="item.businessLogoimg" class="img-responsive" alt="">
+                                            </div>
+                                        </mu-col>
+                                        <mu-col span="7">
+                                            <div class="grid-cell info_top_col7">
+                                                <div class=" clearfix">
+                                                    <span><img :src="item.brandLogo" alt=""></span>
+                                                    <span class="budiness_brandName">{{item.businessName}}</span>
+                                                </div>
+                                                <p><span class="iconfont icon-weizhi"></span><span>{{item.businessAddress}}</span></p>
+                                                <p><span class="iconfont icon-dianhua1 pr3"></span><span>{{item.businessTell}}</span></p>
+                                            </div>
+                                        </mu-col>
+                                    </mu-row>
+                                </div>
+                                <div class="info_bottom Info_Adver_Nw">
+                                    <mu-flex align-items="center">
+                                        <mu-flex justify-content="center" fill class="flex-demo" v-for="(r,index) in item.managementCars" :key="index">
+                                            <img :src="r.carimg1" alt="" class="img-responsive">
+                                        </mu-flex>
+                                       
+                                    </mu-flex>
+                                </div>
+                            </a>
+                        </mu-col>
+                        
+                    </mu-row>
+                    
+                </div>
+            </div>
+        </section>
+    </div>
+</template>
+<style >
+    .info_top .col-7{
+        padding-left: 0px;
+    }
+    .info_top_col7 .clearfix > span{
+        display: inline-block;
+        vertical-align: top;
+        display: table-cell;
+    }
+     .info_top_col7 .clearfix > span:nth-child(1){
+         padding-right: 3px;
+     }
+    .info_top_col7 .clearfix > span > img{
+        width: 30px;
+        height: 30px;
+    }
+    .info_top_col7 p{
+        margin: 0px;
+        font-size: 14px;
+        color: rgba(0,0,0,.37);
+        padding-left: 5px;
+        line-height: initial;
+    }
+    .budiness_brandName{
+        font-size: 16px;
+        transform: translateY(3px);
+    }
+    
+</style>
+<script>
+    export default {
+        data () {
+            return {
+                business: [
+                    {
+                        businessLogoimg: require('@static/images/chezhan/ba3ed194-dc3b-466d-98ae-5c2143f6d588.jpg'),
+                        businessName: '德众宝马汽车行',
+                        businessAddress: '深圳科技园',
+                        businessTell: '0755-88858888',
+                        brandLogo: require('@static/images/chezhan/14612048991063020_s.jpg'),
+                        managementCars: [
+                            {
+                                carimg1: require('@static/images/chezhan/20180521022135229.jpg')
+                            },
+                            {
+                                carimg1: require('@static/images/chezhan/20180521022135229.jpg')
+                            },
+                            {
+                                carimg1: require('@static/images/chezhan/20180521022135229.jpg')
+                            },
+                            {
+                                carimg1: require('@static/images/chezhan/20180521022135229.jpg')
+                            }
+                        ]
+                    },
+                    {
+                        businessLogoimg: require('@static/images/chezhan/ba3ed194-dc3b-466d-98ae-5c2143f6d588.jpg'),
+                        businessName: '滨海梅赛德斯奔驰汽车行',
+                        businessAddress: '滨海大道',
+                        businessTell: '0755-88858888',
+                        brandLogo: require('@static/images/chezhan/14612048991063020_s.jpg'),
+                        managementCars: [
+                            {
+                                carimg1: require('@static/images/chezhan/20180521022135229.jpg')
+                            },
+                            {
+                                carimg1: require('@static/images/chezhan/20180521022135229.jpg')
+                            },
+                            {
+                                carimg1: require('@static/images/chezhan/20180521022135229.jpg')
+                            },
+                            {
+                                carimg1: require('@static/images/chezhan/20180521022135229.jpg')
+                            }
+                        ]
+                    },
+                    {
+                        businessLogoimg: require('@static/images/chezhan/20180604031303244.jpg'),
+                        businessName: '滨海梅赛德斯奔驰汽车行',
+                        businessAddress: '滨海大道',
+                        businessTell: '0755-88858888',
+                        brandLogo: require('@static/images/chezhan/14612048991063020_s.jpg'),
+                        managementCars: [
+                            {
+                                carimg1: require('@static/images/chezhan/20180521022135229.jpg')
+                            },
+                            {
+                                carimg1: require('@static/images/chezhan/20180521022135229.jpg')
+                            },
+                            {
+                                carimg1: require('@static/images/chezhan/20180521022135229.jpg')
+                            },
+                            {
+                                carimg1: require('@static/images/chezhan/20180521022135229.jpg')
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+         created () {
+            this.$store.state.showTopNav = true;//头部导航显示
+        },
+    }
+</script>

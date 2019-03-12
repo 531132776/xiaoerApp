@@ -1,0 +1,350 @@
+<template>
+    <div class="grouppurchase">
+        <!-- 头部banner -->
+        <div class="home_header_banner">
+            <mu-carousel transition="fade">
+                <mu-carousel-item v-for="(item,index) in groupNavBanner" :key="index" >
+                    <a href="javascript:;">
+                    <img :src="item.img">
+                    </a>
+                </mu-carousel-item>
+            </mu-carousel>
+        </div>
+        <!-- 广告 -->
+        <section class="Advertisement ">
+          <a href="javascript:;">
+            <img src="@static/images/chezhan/wKgHEVtQZIKAUD23AABA2pl64dc491.jpg" alt="">
+            <span class="AdvertisementSpan"></span>
+          </a>
+        </section>
+        <!-- 团购list -->
+        <section class="grouppurch_lists_content pt10">
+            <div class="group_text_img bg_fff">
+                <div class="newsTime p15">
+                    <ul class="list-inline ">
+                        <li><span>最新团购倒计时：</span></li>
+                        <li>
+                            <span id="setTimeOut_time">
+                                <i class="bg_timeColor" id="RemainD">15</i>
+                                <em>天</em>
+                                <i class="bg_timeColor" id="RemainH">2</i>
+                                <em>时</em>
+                                <i class="bg_timeColor" id="RemainM">16</i>
+                                <em>分</em>
+                                <i class="bg_timeColor" id="RemainS">2</i>
+                                <em>秒</em>
+                            </span>
+                        </li>
+                    </ul>
+                    <div class="mt20">
+                        <div class="text-center font_img">
+                            <a href="javascript:;" class="scaleimg" target="_blank">
+                                <img src="@static/images/chezhan/20180604031303244.jpg" class="img-responsive" alt="">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="text-center pt10 ">
+                        <h4 class="h4_mgin"><b>一汽奥迪A6L</b></h4>
+                    </div>
+                    <ul class="list-unstyled clearfix">
+                        <li class="pull-left">
+                            <span>最高优惠：<em class="text-red price_size">7.27万</em></span>
+                        </li>
+                        <li class="pull-right">
+                            <span>已有：<em class="text-red price_size">1711</em>人报名团购</span>
+                        </li>
+                    </ul>
+                    <div class="pt10 clearfix btn-rigt">
+                        <mu-button type="button" color="primary" class="pull-right ml20">了解详情</mu-button>
+                        <mu-button type="button" color="secondary" class="pull-right">团购报名</mu-button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- 团购活动 -->
+        
+        <!-- 车型特卖 -->
+        <section class="car_Special_sale pt10">
+          <div class="car_Spacial_lists ">
+            <div class="lg_title p15">
+              <mu-list-item-action>
+                <span class="mu-badge mu-secondary-color">商家特卖活动</span>
+              </mu-list-item-action>
+            </div>
+            <mu-divider></mu-divider>
+            <!-- 车型列表 -->
+            <div class="car_Spacial_col">
+              <div class="common_pdd">
+                <mu-row gutter class="row_m0">
+                  <mu-col span="6" sm="6" md="6" lg="6" xl="6" v-for="(item,index) in carSpacialList" :key="index" class="pt10">
+                    <div class="grid-cell">
+                      <div class="img_vw100 groupPurchvue_groupList">
+                        <a class="ablock" @click="signUp($event,carId[index],item.cssIds,item)">
+                        <img :src="item.titleImgage" alt="">
+                        </a>
+                      </div>
+                      <div class="car_spacial_text pt8_pb8">
+                        <h5 class="text_center">{{item.name}}</h5>
+                        <dl class="text_center">
+                          <dt class="text-999">
+                              <em class="text-red">{{item.minPrice}}~{{item.maxPrice}}万</em>
+                              <i class="sprice"><img src="@static/images/chezhan/yly.png" class="img-responsive" alt=""></i>
+                              <em class="text-999">8.88万</em>
+                          </dt>
+                        </dl>
+                      </div>
+                    </div>
+                  </mu-col>
+                </mu-row>
+              </div>
+            </div>
+            <!-- 车型团购特卖活动新闻 -->
+            <div class="car_grouppurch_news ">
+              <div class="lg_title">
+                  <!-- <h4 class="">商家特卖会新闻</h4> -->
+                  <mu-sub-header>车型团购新闻</mu-sub-header>
+              </div>
+              <mu-divider></mu-divider>
+              <!-- 网上团购新闻 -->
+              <div class="carSpecial_text_img">
+                <div v-for="(item,index) in onlineGroupNews" :key="index" class="view_cell_after">
+                  <a class="ablock" @click="toOnlineGroupNews(item.id,item.content,item.title,item.createTime)">
+                    <mu-row gutter class="row_m0_p157">
+                      <mu-col span="8" sm="8" lg="7" md="7" xl="8">
+                        <ul class="grouppurch_news_text news_text">
+                          <div class="title_text">{{item.title}}</div>
+                          <!-- <li>{{item.news}}</li> -->
+                        </ul>
+                      </mu-col>
+                      <mu-col span="4" sm="4" lg="5" md="5" xl="4">
+                        <div class="img_box">
+                            <img :src="item.titleImgage" alt="" class="img-responsive">
+                        </div>
+                      </mu-col>
+                    </mu-row>
+                  </a>
+                </div>
+              </div>
+              <!-- 现在团购新闻 -->
+              <div class="carSpecial_text_img">
+                <div v-for="(item,index) in sceneGroupNews" :key="index" class="view_cell_after after_last">
+                  <a class="ablock" @click="toSceneGroupNews(item.id,item.content,item.title,item.createTime)">
+                    <mu-row gutter class="row_m0_p157">
+                      <mu-col span="8" sm="8" lg="7" md="7" xl="8">
+                        <ul class="grouppurch_news_text news_text">
+                          <div class="title_text">{{item.title}}</div>
+                          <!-- <li>{{item.news}}</li> -->
+                        </ul>
+                      </mu-col>
+                      <mu-col span="4" sm="4" lg="5" md="5" xl="4">
+                        <div class="img_box">
+                            <img :src="item.titleImgage" alt="" class="img-responsive">
+                        </div>
+                      </mu-col>
+                    </mu-row>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+    </div>
+    
+    
+</template>
+<style >
+
+.newsTime .font_img {
+  display: flex;
+  display: -webkit-flex;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+.scaleimg {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  display: block;
+}
+.bg_timeColor {
+  background: #ff7ca1;
+  font-weight: 600;
+  color: #fff;
+  padding: 2px;
+  font-size: 1.6em;
+}
+.text-center {
+  text-align: center;
+}
+.list-unstyled {
+  padding-left: 0;
+  list-style: none;
+}
+.newsTime ul li {
+  height: 30px;
+  line-height: 30px;
+  font-size: 14px;
+}
+
+.price_size {
+  font-size: 16px;
+  font-weight: 600;
+}
+</style>
+<script>
+import apiAll from '@/http/apiAll'
+import Toast from 'muse-ui-toast'
+export default {
+  data() {
+    return {
+      groupNavBanner: [
+        {
+          img: require("@static/images/chezhan/wKgHHFsh05OAAFgZAAJ1OC0p8jQ504.jpg")
+        },
+        {
+          img: require("@static/images/chezhan/1280x0_q87_c41_autohomecar__ChcCP1ta0XOAaQ_GAAP6RjDmc0w045.jpg")
+        },
+        {
+          img: require("@static/images/chezhan/wKgHFFtL9O6AMAp6AASTT1NoFMA144.jpg")
+        },
+        {
+          img: require("@static/images/chezhan/1280x0_q87_c41_autohomecar__ChcCP1ta6L6ALgwPAADhyNHKrgM468.jpg")
+        }
+      ],
+      carSpacialList: [],
+      onlineGroupNews:[],//网上团购新闻
+      sceneGroupNews:[],//现场团新闻
+      carId:[],
+    };
+  },
+  created(){
+    this.$store.state.showTopNav = true;//头部导航显示
+    this.onlineGroupNewsList()//网上团购新闻
+    this.sceneGroupNewsList()//现场团购新闻
+  },
+  mounted () {
+    //获取团购车型
+    this.groupCarList();
+  },
+  methods:{
+      ////网上团购新闻
+    async onlineGroupNewsList(){
+      let params = {
+        type:1,
+        nnNewsCode:"tuangou_wangshang",
+        currentPage:1,
+        pageSize:12
+      }
+      try{
+        let res =await apiAll.getNewList(params);
+        console.log(res)
+        if(res.data != null && res.data != undefined){
+          this.onlineGroupNews = res.data;
+        }
+      }catch(e){
+        Toast.error({
+          message:'网络错误或者没有数据',
+          position:'top',
+          errorIcon: 'warning'
+        })
+      }
+    },
+    toOnlineGroupNews(id,content,title,createTime){
+      this.$router.push({
+        name:'news',
+        params:{
+          id:id,
+          content:content,
+          title:title,
+          createTime:createTime
+        }
+      })
+    },
+    ////现场团购新闻
+    async sceneGroupNewsList(){
+      let params = {
+        type:1,
+        nnNewsCode:"tuangou_xianchang",
+        currentPage:1,
+        pageSize:12
+      }
+      try{
+        let res =await apiAll.getNewList(params);
+        // console.log(res)
+        if(res.data != null && res.data != undefined){
+          this.sceneGroupNews = res.data;
+        }
+      }catch(e){
+        Toast.error({
+          message:'网络错误或者没有数据',
+          position:'top',
+          errorIcon: 'warning'
+        })
+      }
+    },
+    toSceneGroupNews(id,content,title,createTime){
+      this.$router.push({
+        name:'news',
+        params:{
+          id:id,
+          content:content,
+          title:title,
+          createTime:createTime
+        }
+      })
+    },
+    //团购车型list
+      async groupCarList(){
+        var params = {
+            currentPage:1,
+            pageSize:8,
+            timeType:2
+          }
+        try{
+          
+          let carList = await apiAll.getGroupList(params);
+          console.log(carList)
+          if(carList.data !=null && carList.data !=undefined){
+            this.carSpacialList = carList.data;
+            for(let i = 0; i < carList.data.length; i++){
+              this.carId.push(carList.data[i].id); 
+              // console.log(carList.data[i].id)
+            }
+           
+          }
+          
+        }catch(e){
+          this.$alert('请求错误','提示',{
+                errorIcon: 'warning',
+                iconSize: 24,
+                width: '80%',
+                transition: 'scale',
+                okLabel: '确定',
+          })
+        }
+      },
+      signUp(e,id,arrCssIds,item){
+          e.preventDefault();
+          // console.log(id)
+          this.$router.push(
+                {
+                  name:'groupPuSignUp',
+                  params: {
+                      name: 'zhuxyong',
+                      age:28,
+                      id:id,
+                      cssIds:arrCssIds,
+                      content:JSON.stringify(item)
+                  }
+                }
+          )
+      }
+  }
+};
+</script>

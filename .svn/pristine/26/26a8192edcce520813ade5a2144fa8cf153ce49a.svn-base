@@ -1,0 +1,276 @@
+<template>
+    <div class="distributor">
+        <mu-row>
+            <mu-col span="12">
+                <mu-button full-width color="secondary" @click="open = !open">选择品牌经销商</mu-button>
+            </mu-col>
+        </mu-row>
+        <!-- 商家列表 -->
+        <section class="distributor_list pt10">
+            <div class="distributor_details ">
+                <div class="business_info">
+                    <mu-row gutter class="row_m0">
+                        <mu-col span="12" lg="6" xl="6" md="12" sm="12" class="pt_pb10 pr_pl15" v-for="(item,index) in business" :key="index">
+                            <div class="bg_fff p10">
+                                <a @click="dealershop(item.id, item.name, item.brand != null ? item.brand.logo : '',item)" class="ablock">
+                                    <div class="info_top pb10">
+                                        <mu-row gutter>
+                                            <mu-col span="5">
+                                                <div class="grid-cell">
+                                                    <img src="@static/images/chezhan/ba3ed194-dc3b-466d-98ae-5c2143f6d588.jpg" class="img-responsive" alt="">
+                                                </div>
+                                            </mu-col>
+                                            <mu-col span="7">
+                                                <div class="grid-cell info_top_col7">
+                                                    <div class=" clearfix">
+                                                        <span><img :src="item.brand !=null ? 'http://39.108.53.107:9098/'+item.brand.logo+'' : ''" alt=""></span>
+                                                        <span class="budiness_brandName">{{item.name}}</span>
+                                                    </div>
+                                                    <p><span class="iconfont icon-weizhi"></span><span>{{item.address}}</span></p>
+                                                    <p><span class="iconfont icon-dianhua1 pr3"></span><span>{{item.code}}</span></p>
+                                                </div>
+                                            </mu-col>
+                                        </mu-row>
+                                    </div>
+                                </a>
+                                <div class="info_bottom Info_Adver_Nw">
+                                    <!-- <mu-flex align-items="center"> -->
+                                        <mu-flex justify-content="center" fill class="flex-demo" v-for="(r,index) in item.groupPurchases.carSeries" :key="index">
+                                            <a @click="() => {$router.push({path: '/groupPuSignUp'})}" class="ablock">
+                                                <img :src="r.image" alt="" class="img-responsive">
+                                                <div>{{r.name}}</div>
+                                            </a>
+                                            
+                                        </mu-flex>
+                                       
+                                    <!-- </mu-flex> -->
+                                </div>
+                            </div>
+                        </mu-col>
+                        
+                    </mu-row>
+                    
+                </div>
+            </div>
+        </section>
+        <!-- 选择品牌经销商 -->
+        <mu-drawer :open.sync="open" :docked='false' :right='true'>
+            <div class="position_scollr">
+                <mu-list>
+                <mu-list-item button>
+                    <mu-list-item-title>选择品牌</mu-list-item-title>
+                </mu-list-item>
+                <mu-expansion-panel v-for="(item,index) in brandListAggregate" :key="index" :expand="panel3 === 'panel'+index" @change="toggle('panel'+index,item.firstLetter)">
+                    <div slot="header">{{item.firstLetter}}</div>
+                    <mu-list-item button v-for="(childBrand,index) in item.brandList" :key="index" @click.prevent="selectBrand(childBrand.id)">
+                        <mu-list-item-action>
+                            <div class="brandLogoImages">
+                                <img :src="childBrand.logo.indexOf('group1') == -1 || childBrand.logo.indexOf('group1') == undefined ? '' : childBrand.logo" class="img-responsive" alt="">
+                            </div>
+                        </mu-list-item-action>
+                        <mu-list-item-title>{{childBrand.name}}</mu-list-item-title>
+                    </mu-list-item>
+                </mu-expansion-panel>
+                <mu-list-item  @click="open = false" button>
+                    <mu-list-item-title>Close</mu-list-item-title>
+                </mu-list-item>
+            </mu-list>
+            </div>
+        </mu-drawer>
+        <!-- 回到顶部 -->
+        <transition name="fade" mode="out-in">
+            <div class="scroll_top " v-show="$store.state.showTop" @click="TopScroll">
+                <span class="iconfont icon-triangle-up"></span>
+            </div>
+        </transition>
+    </div>
+    
+</template>
+<style >
+    /* .position_scollr{
+        position: relative;
+        height: 100vh;
+        overflow-y: auto;
+    } */
+    .brandLogoImages{
+        width: 40px;
+        height: 40px;
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-items: center;
+    }
+    .info_top .col-7{
+        padding-left: 0px;
+    }
+    .info_top_col7 .clearfix > span{
+        display: inline-block;
+        vertical-align: top;
+        display: table-cell;
+    }
+     .info_top_col7 .clearfix > span:nth-child(1){
+         padding-right: 3px;
+     }
+    .info_top_col7 .clearfix > span > img{
+        max-width: 50px;
+        max-height: 40px;
+    }
+    .info_top_col7 p{
+        margin: 0px;
+        font-size: 14px;
+        color: rgba(0,0,0,.37);
+        padding-left: 5px;
+        line-height: initial;
+    }
+    .budiness_brandName{
+        font-size: 16px;
+        transform: translateY(3px);
+    }
+    
+</style>
+<script>
+import apiAll from '@/http/apiAll.js'
+import Toast from 'muse-ui-toast'
+import { mapMutations,mapActions } from 'vuex'
+    export default {
+        data () {
+            return {
+                panel3: '',
+                open:false,
+                business: [],
+                brandListAggregate:[],//品牌经销商列表
+                brandIdList:[],
+                cityList:[],
+                cityId:'',
+                storageCityId:'',
+                firstLetterBrand:[],
+                id:''
+            }
+        },
+         created () {
+            this.$store.state.showTopNav = true;//头部导航显示
+            
+            //获取字母及品牌商家
+            this.getLetterList()
+            //获取商家列表集合
+            // this.getPortalCompanyList();
+            //
+            this.getCityList();
+            this.storageCityId = window.localStorage.getItem(`cityId`);
+            //回到顶部
+            const _this = this
+            window.addEventListener('scroll', _this.handleScroll)
+        },
+        methods:{
+            ...mapMutations(['handleScroll']),
+            ...mapActions(['addAction','TopScroll']),
+            //获取商家列表集合
+            async getPortalCompanyList(brandIdList){
+                let data = {
+                    cityId:this.storageCityId,
+                    brandIdList:brandIdList,
+                    pageSize:100,
+                    currentPage:1
+                }
+                try{
+                    let res = await apiAll.getCompanyList(data);
+                    console.log(res)
+                     this.business = res.data || [];
+                    // if(res.data != null && res.data != undefined){
+                    //     this.business = res.data
+                    // }else if(res.data == null){
+                    //     this.business = res.data
+                    // }
+                }catch(e){
+                    Toast.error({
+                        message:'可能没有数据',
+                        errorIcon:'warning',
+                        position: 'top',
+                        infoicon:'info'
+                    })
+                }
+            },
+            //获取字母及品牌商家
+            async getLetterList(){
+                try{
+                    let params = await apiAll.getLetterBrandList({});
+                    // console.log(params)
+                    let newBrandList = []
+                    if(params != null && params != undefined){
+                        this.brandListAggregate = params.data;
+                        this.firstLetterBrand = params.data;
+                        if(params.data.length > 0){
+                            for(let i=0;i<params.data.length;i++){
+                                newBrandList = params.data[i].brandList;
+                                // console.log(newBrandList)
+                                if(newBrandList.length > 0){
+                                    for(let j=0; j<newBrandList.length; j++){
+                                        if(newBrandList[j].id != null && newBrandList[j].id != undefined){
+                                            this.brandIdList.push(newBrandList[j].id)
+                                        }
+                                        
+                                    }
+                                    
+                                }
+                            }
+                        }
+                    }
+                    this.getPortalCompanyList(this.brandIdList)
+                }catch(e){
+                    Toast.error({
+                        message:'可能没有数据11',
+                        errorIcon:'warning',
+                        position: 'top',
+                        infoicon:'info'
+                    })
+                }
+            },
+            //获取城市
+            async getCityList(){
+                try{
+                let getCity = await apiAll.getCityList({});
+                //  console.log(getCity);
+                if(getCity.data != null && getCity.data !=undefined){
+                    this.cityList = getCity.data;
+                    let city = getCity.data.find(val => val.name =="广州")
+                        this.cityId = city.id;
+                        window.localStorage.setItem(`cityId`,this.cityId);
+                }
+
+                }catch(e){
+                this.$alert('请求错误!','提示',{
+                    errorIcon: 'warning',
+                        iconSize: 24,
+                        width: '80%',
+                        transition: 'scale',
+                        okLabel: '确定',
+                })
+                }
+            },
+            //选择品牌车型
+            toggle (panel,firstLetter) {
+                this.panel3 = panel === this.panel3 ? '' : panel;
+                 let newLetterBrand = this.firstLetterBrand !=undefined && this.firstLetterBrand !=null ? this.firstLetterBrand.filter(v=>v.firstLetter===firstLetter) : ""
+                 let array = newLetterBrand[0].brandList.map(v=>v.id)
+                 this.getPortalCompanyList(array);
+            },
+            selectBrand(brandId){
+                // alert(brandId);
+                this.getPortalCompanyList([brandId])
+            },
+            //商家主页
+            dealershop(companyId,companyName,companyLogo,item){
+                this.$store.commit('setName',{companyId,companyName,companyLogo,item});
+                this.$router.push({
+                    name: 'dealershop',
+                    params:{
+                        id:companyId,
+                        name:companyName,
+                        logo:companyLogo,
+                        item:JSON.stringify(item)
+                    }
+                })
+            },
+        }
+    }
+</script>

@@ -1,0 +1,53 @@
+import Vue from 'vue'
+import Vuex from 'vuex'
+
+Vue.use(Vuex);
+
+const map = new Map();
+        map.set("1","微型车");
+        map.set("2","小型车");
+        map.set("3","紧凑型车");
+        map.set("4","中型车");
+        map.set("5","中大型车");
+        map.set("6","豪华车");
+        map.set("7","MPV");
+        map.set("8","SUV");
+        map.set("9","跑车");
+        map.set("10","面包车");
+        map.set("11","皮卡");
+        map.set("12","微卡");
+        map.set("13","轻客");
+        map.set("14","微面");
+        map.set("15","大型");
+const state = {
+    showTopNav: true,
+    pdTop: 'pdTopClass',
+    routelist: [
+        {
+            path:'/home',
+            title:'首页',
+            value:'active-color'
+        },
+        {
+            path:'/autoshow',
+            title:'车展',
+            value:'active-color'
+        },
+        {
+            path:'/grouppurchase',
+            title:'团购',
+            value:'active-color'
+        },
+        {
+            path:'/distributor',
+            title:'商家',
+            value:'active-color'
+        },
+      ],
+      map
+};
+
+
+export default new Vuex.Store({
+    state
+})
